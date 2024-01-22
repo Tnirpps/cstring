@@ -1,0 +1,346 @@
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+
+#define CSTRING_IMPLEMENTATION
+#include "../cstring.h"
+
+
+
+#define assertEq(X, Y)                                \
+    while((X) != (Y)){                                \
+    printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
+    assert((X) == (Y));                               \
+}
+
+#define assertNotEq(X, Y)                             \
+    while((X) == (Y)){                                \
+    printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
+    assert((X) != (Y));                               \
+}
+
+
+void printGreen(const char *text) {
+    printf("\033[32m[ok]\033[0m %s", text);
+}
+
+void printRed(const char *text) {
+    printf("\033[31m[wa] %s\033[0m", text);
+}
+
+void test_stringStartWith() {
+    TString str = stringInitWithCharArr("Hello, World!");
+    
+    TString prefix = stringInitWithCharArr("Hello");
+    assertEq(stringStartWith(str, prefix), true);
+
+    TString wrongPrefix = stringInitWithCharArr("World");
+    assertEq(stringStartWith(str, wrongPrefix), false);
+
+    stringDestroy(&str);
+    stringDestroy(&prefix);
+    stringDestroy(&wrongPrefix);
+
+    printGreen("test_stringStartWith\n");
+}
+
+void test_stringStartWithCharArr() {
+    TString str = stringInitWithCharArr("Hello, World!");
+
+    assertEq(stringStartWithCharArr(str, "Hello"), true);
+    assertEq(stringStartWithCharArr(str, "World"), false);
+
+    stringDestroy(&str);
+
+    printGreen("test_stringStartWithCharArr\n");
+}
+
+void test_stringEndWith() {
+    TString str = stringInitWithCharArr("Hello, World!");
+    
+    TString suffix = stringInitWithCharArr("World!");
+    assertEq(stringEndWith(str, suffix), true);
+
+    TString wrongSuffix = stringInitWithCharArr("Hello");
+    assertEq(stringEndWith(str, wrongSuffix), false);
+
+    stringDestroy(&str);
+    stringDestroy(&suffix);
+    stringDestroy(&wrongSuffix);
+
+    printGreen("test_stringEndWith\n");
+}
+
+void test_stringEndWithCharArr() {
+    TString str = stringInitWithCharArr("Hello, World!");
+
+    assertEq(stringEndWithCharArr(str, "World!"), true);
+    assertEq(stringEndWithCharArr(str, "Hello"), false);
+
+    stringDestroy(&str);
+
+    printGreen("test_stringEndWithCharArr\n");
+}
+
+void test_stringLen() {
+    TString str = stringInitWithCharArr("Hello");
+
+    assertEq(stringLen(str), 5);
+
+    TString emptyString = stringInitWithCharArr("");
+    assertEq(stringLen(emptyString), 0);
+
+    stringDestroy(&str);
+    stringDestroy(&emptyString);
+
+    printGreen("test_stringLen\n");
+}
+
+void test_stringFindFirst() {
+    TString str = stringInitWithCharArr("Hello, World!");
+    //TString pattern = stringInitWithCharArr("llo");
+    TString pattern = stringInitWithCharArr("World");
+
+    assertEq(stringFindFirst(str, pattern), 7);
+
+    TString nonExistingPattern = stringInitWithCharArr("XYZ");
+    assertEq(stringFindFirst(str, nonExistingPattern), -1);
+
+    stringDestroy(&str);
+    stringDestroy(&pattern);
+    stringDestroy(&nonExistingPattern);
+
+    printGreen("test_stringFindFirst\n");
+}
+
+void test_stringFindFirstCharArr() {
+    TString str = stringInitWithCharArr("Hello, World!");
+
+    assertEq(stringFindFirstCharArr(str, "World"), 7);
+    assertEq(stringFindFirstCharArr(str, "XYZ"), -1);
+
+    stringDestroy(&str);
+
+    printGreen("test_stringFindFirstCharArr\n");
+}
+
+void test_stringInit() {
+    TString str = stringInit(10);
+
+    assertEq(str.capacity, 10);
+    assertEq(str.size, 0);
+
+    stringDestroy(&str);
+
+    printGreen("test_stringInit\n");
+}
+
+void test_stringInitWithCharArr() {
+    const char *testStr = "Test string";
+    TString str = stringInitWithCharArr(testStr);
+
+    assertEq(stringLen(str), strlen(testStr));
+    assertEq(strncmp(str.data, testStr, str.size), 0);
+
+    stringDestroy(&str);
+
+    printGreen("test_stringInitWithCharArr\n");
+}
+
+void test_stringInitWithInt() {
+    int64_t number = 12345678;
+    TString str = stringInitWithInt(number);
+
+    TString expectedString = stringInitWithCharArr("12345678");
+    assertEq(stringLen(str), stringLen(expectedString));
+    assertEq(strncmp(str.data, expectedString.data, str.size), 0);
+
+    stringDestroy(&str);
+    stringDestroy(&expectedString);
+
+    printGreen("test_stringInitWithInt\n");
+}
+
+
+void test_stringCopy() {
+    TString original = stringInitWithCharArr("Test string for copy");
+    TString copied = stringCopy(original);
+
+    assertEq(stringLen(copied), stringLen(original));
+    assertEq(strncmp(copied.data, original.data, copied.size), 0);
+    assertEq(copied.data, original.data); // Ensure it's a shallow copy
+
+    stringDestroy(&original);
+
+    printGreen("test_stringCopy\n");
+}
+
+void test_stringDeepCopy() {
+    TString original = stringInitWithCharArr("Test string for deep copy");
+    TString deepCopy = stringDeepCopy(original);
+
+    assertEq(stringLen(deepCopy), stringLen(original));
+    assertEq(strncmp(deepCopy.data, original.data, deepCopy.size), 0);
+    assertNotEq(deepCopy.data, original.data); // Ensure it's a deep copy
+
+    stringDestroy(&original);
+    stringDestroy(&deepCopy);
+
+    printGreen("test_stringDeepCopy\n");
+}
+
+void test_stringSubstring() {
+    TString str = stringInitWithCharArr("Hello, World!");
+    size_t startPos = 7;
+    size_t length = 5;
+    TString sub = stringSubstring(str, startPos, length);
+    TString ans = stringInitWithCharArr("World");
+
+    assertEq(stringLen(sub), length);
+    assertEq(stringIsEqual(sub, ans), true);
+    assertEq(strncmp(sub.data, &str.data[startPos], length), 0);
+
+    stringDestroy(&str);
+    stringDestroy(&sub);
+    stringDestroy(&ans);
+
+    printGreen("test_stringSubstring\n");
+}
+
+void test_stringConcat() {
+    TString str1 = stringInitWithCharArr("Hello");
+    TString str2 = stringInitWithCharArr(", World!");
+    TString result = stringConcat(str1, str2);
+
+    assertEq(stringLen(result), stringLen(str1) + stringLen(str2));
+    assertEq(strncmp(result.data, "Hello, World!", stringLen(result)), 0);
+
+    stringDestroy(&str1);
+    stringDestroy(&str2);
+    stringDestroy(&result);
+
+    printGreen("test_stringConcat\n");
+}
+
+void test_stringArrConcat() {
+    TString strs[3];
+    strs[0] = stringInitWithCharArr("One");
+    strs[1] = stringInitWithCharArr("Two");
+    strs[2] = stringInitWithCharArr("Three");
+    size_t count = sizeof(strs) / sizeof(strs[0]);
+
+    TString result = stringArrConcat(strs, count);
+
+    size_t expectedLength = 0;
+    for (size_t i = 0; i < count; ++i) {
+        expectedLength += stringLen(strs[i]);
+    }
+
+    assertEq(stringLen(result), expectedLength);
+    assertEq(strncmp(result.data, "OneTwoThree", stringLen(result)), 0);
+
+    for (size_t i = 0; i < count; ++i) {
+        stringDestroy(&strs[i]);
+    }
+    stringDestroy(&result);
+
+    printGreen("test_stringArrConcat\n");
+}
+
+void test_stringPushBack() {
+    TString str = stringInitWithCharArr("hello");
+    char c = '!';
+    stringPushBack(&str, c);
+
+    assertEq(stringLen(str), 6);
+    assertEq(str.data[stringLen(str) - 1], c);
+    
+    stringDestroy(&str);
+    printGreen("test_stringPushBack passed\n");
+}
+
+void test_stringTrim() {
+    TString str = stringInitWithCharArr("   hello   ");
+    stringTrim(&str);
+
+    assertEq(stringLen(str), 5);
+    assertEq(strncmp(str.data, "hello", stringLen(str)), 0);
+    
+    stringPushBack(&str, '\n');
+    for (size_t i = 0; i < 100; ++i) {
+        stringPushBack(&str, ' ');
+    }
+    stringTrim(&str);
+
+    assertEq(stringLen(str), 5);
+    assertEq(strncmp(str.data, "hello", stringLen(str)), 0);
+
+    
+    stringDestroy(&str);
+    printGreen("test_stringTrim\n");
+}
+
+void test_stringReplaceAll() {
+    TString str = stringInitWithCharArr("hello world, world!");
+    const char *oldSub = "world";
+    const char *newSub = "C";
+    stringReplaceAll(&str, oldSub, newSub);
+
+    TString expected = stringInitWithCharArr("hello C, C!");
+    assertEq(stringLen(str), stringLen(expected));
+    assertEq(strncmp(str.data, expected.data, stringLen(expected)), 0);
+
+    stringDestroy(&str);
+    stringDestroy(&expected);
+    printGreen("test_stringReplaceAll\n");
+}
+
+void test_stringReverse() {
+    TString str = stringInitWithCharArr("hello");
+    stringReverse(&str);
+
+    assertEq(stringLen(str), 5);
+    assertEq(strncmp(str.data, "olleh", stringLen(str)), 0);
+
+    stringDestroy(&str);
+    printGreen("test_stringReverse\n");
+}
+
+void test_stringCompare() {
+    TString s1 = stringInitWithCharArr("hello");
+    TString s2 = stringInitWithCharArr("hello");
+    TString s3 = stringInitWithCharArr("heaa");
+
+    assertEq(stringCompare(s1, s2), 0);
+    assertEq(stringCompare(s1, s3), -1);
+
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+    stringDestroy(&s3);
+    printGreen("test_stringCompare\n");
+}
+
+
+int main() {
+    test_stringStartWith();
+    test_stringEndWith();
+    test_stringLen();
+    test_stringFindFirst();
+    test_stringFindFirstCharArr();
+    test_stringInit();
+    test_stringInitWithInt();
+    test_stringInitWithCharArr();
+    test_stringCopy();
+    test_stringDeepCopy();
+    test_stringSubstring();
+    test_stringConcat();
+    test_stringArrConcat();
+    test_stringPushBack();
+    test_stringTrim();
+    test_stringReplaceAll();
+    test_stringReverse();
+    test_stringCompare();
+    return 0;
+}
+
+
