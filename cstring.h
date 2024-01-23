@@ -32,12 +32,19 @@ typedef struct TString {
 } TString;
 
 
+bool stringCharIsDigit(char c);
+bool stringCharIsAlpha(char c);
+bool stringCharIsAlphanum(char c);
+char stringCharToLower(char c);
+char stringCharToUpper(char c);
+
 bool stringStartWith(TString s, TString pref);
 bool stringStartWithCharArr(TString s, char *pref);
 bool stringEndWith(TString s, TString pref);
 bool stringEndWithCharArr(TString s, char *pref);
 bool stringIsEqual(TString s1, TString s2);
 bool stringIsDigits(TString s);
+bool stringIsAlphas(TString s);
 
 size_t stringLen(TString s);
 
@@ -72,6 +79,8 @@ void stringDebug(TString s);
 */
 
 void stringPushBack(TString *s, char c);
+void stringTrimLeft(TString *s);
+void stringTrimRight(TString *s);
 void stringTrim(TString *s);
 void stringToUpper(TString *s);
 void stringToLower(TString *s);
@@ -185,6 +194,27 @@ void stringIncreaseCap(TString *s) {
 
 // import 
 
+bool stringCharIsDigit(char c) {
+    return ('0' <= c && c <= '9');
+}
+
+bool stringCharIsAlpha(char c) {
+    return ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z');
+}
+
+bool stringCharIsAlphanum(char c) {
+    return stringCharIsDigit(c) || stringCharIsAlpha(c);
+}
+
+char stringCharToLower(char c) {
+    if ('A' <= c && c <= 'Z') return 'a' + (c - 'A');
+    return c;
+}
+char stringCharToUpper(char c) {
+    if ('a' <= c && c <= 'z') return 'A' + (c - 'a');
+    return c;
+}
+
 bool stringStartWith(TString s, TString pref) {
     if (s.size < pref.size) return false;
     return stringCompSubstr(s.data, 0, pref.size, pref.data, 0, pref.size) == 0;
@@ -216,7 +246,15 @@ bool stringIsEqual(TString s1, TString s2) {
 bool stringIsDigits(TString s) {
     if (s.data == NULL || s.size == 0) return false;
     for (size_t i = 0; i < s.size; ++i) {
-        if (!('0' <= s.data[i] && s.data[i] <= '9')) return false;
+        if (!stringCharIsDigit(s.data[i])) return false;
+    }
+    return true;
+}
+
+bool stringIsAlphas(TString s) {
+    if (s.data == NULL || s.size == 0) return false;
+    for (size_t i = 0; i < s.size; ++i) {
+        if (!stringCharIsAlpha(s.data[i])) return false;
     }
     return true;
 }
@@ -500,28 +538,33 @@ void stringPushBack(TString *s, char c) {
     s->size++;
 }
 
-void stringTrim(TString *s) {
+void stringTrimLeft(TString *s) {
     if (s == NULL || s->data == NULL || s->size == 0) return;
 
     size_t start = 0;
-    size_t end = s->size - 1;
     while (start < s->size && stringCharOneOf(s->data[start], " \t\n")) {
         ++start;
-    }
-    // if string contains only delimeters
-    if (start == s->size) {
-        s->size = 0;
-        return;
-    }
-
-    while (end > 0 && stringCharOneOf(s->data[end], " \t\n")) {
-        --end;
     }
 
     for (size_t i = 0; i + start < s->size; ++i) {
         s->data[i] = s->data[i + start];
     }
-    s->size = (end - start + 1);
+    s->size -= start;
+}
+
+void stringTrimRight(TString *s) {
+    if (s == NULL || s->data == NULL || s->size == 0) return;
+
+    int end = s->size - 1;
+    while (end >= 0 && stringCharOneOf(s->data[end], " \t\n")) {
+        --end;
+    }
+    s->size = (end + 1);
+}
+
+void stringTrim(TString *s) {
+    stringTrimRight(s);
+    stringTrimLeft(s);
 }
 
 void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
@@ -574,14 +617,14 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
 void stringToUpper(TString *s) {
     if (s == NULL || s->data == NULL || s->size == 0) return;
     for (size_t i = 0; i < s->size; ++i) {
-        if ('a' <= s->data[i] && s->data[i] <= 'z') s->data[i] += ('A' - 'a');
+        s->data[i] = stringCharToUpper(s->data[i]);
     }
 }
 
 void stringToLower(TString *s) {
     if (s == NULL || s->data == NULL || s->size == 0) return;
     for (size_t i = 0; i < s->size; ++i) {
-        if ('A' <= s->data[i] && s->data[i] <= 'Z') s->data[i] += ('a' - 'A');
+        s->data[i] = stringCharToLower(s->data[i]);
     }
 }
 
