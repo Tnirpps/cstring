@@ -37,6 +37,7 @@ bool stringStartWithCharArr(TString s, char *pref);
 bool stringEndWith(TString s, TString pref);
 bool stringEndWithCharArr(TString s, char *pref);
 bool stringIsEqual(TString s1, TString s2);
+bool stringIsDigits(TString s);
 
 size_t stringLen(TString s);
 
@@ -72,6 +73,8 @@ void stringDebug(TString s);
 
 void stringPushBack(TString *s, char c);
 void stringTrim(TString *s);
+void stringToUpper(TString *s);
+void stringToLower(TString *s);
 void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
 void stringReverse(TString *s);
 void stringDestroy(TString *s);
@@ -79,7 +82,7 @@ void stringDestroy(TString *s);
 #endif
 
 // for testing:
-// #define CSTRING_IMPLEMENTATION
+#define CSTRING_IMPLEMENTATION
 
 #ifdef CSTRING_IMPLEMENTATION
 
@@ -208,6 +211,14 @@ bool stringEndWithCharArr(TString s, char *pref) {
 
 bool stringIsEqual(TString s1, TString s2) {
     return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size) == 0;
+}
+
+bool stringIsDigits(TString s) {
+    if (s.data == NULL || s.size == 0) return false;
+    for (size_t i = 0; i < s.size; ++i) {
+        if (!('0' <= s.data[i] && s.data[i] <= '9')) return false;
+    }
+    return true;
 }
 
 size_t stringLen(TString s) {
@@ -558,6 +569,20 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
     }
     stringDestroy(s);
     *s = res;
+}
+
+void stringToUpper(TString *s) {
+    if (s == NULL || s->data == NULL || s->size == 0) return;
+    for (size_t i = 0; i < s->size; ++i) {
+        if ('a' <= s->data[i] && s->data[i] <= 'z') s->data[i] += ('A' - 'a');
+    }
+}
+
+void stringToLower(TString *s) {
+    if (s == NULL || s->data == NULL || s->size == 0) return;
+    for (size_t i = 0; i < s->size; ++i) {
+        if ('A' <= s->data[i] && s->data[i] <= 'Z') s->data[i] += ('a' - 'A');
+    }
 }
 
 void stringReverse(TString *s) {

@@ -320,6 +320,29 @@ void test_stringCompare() {
     printGreen("test_stringCompare\n");
 }
 
+void test_stringToUpper() {
+    TString s   = stringInitWithCharArr("Hello World! 123\n");
+    TString res = stringInitWithCharArr("HELLO WORLD! 123\n");
+    stringToUpper(&s);
+    assertEq(stringCompare(s, res), 0);
+
+    stringDestroy(&s);
+    stringDestroy(&res);
+    printGreen("test_stringToUpper\n");
+
+}
+
+void test_stringToLower() {
+    TString s   = stringInitWithCharArr("Hello World! 123\n");
+    TString res = stringInitWithCharArr("hello world! 123\n");
+    stringToLower(&s);
+    assertEq(stringCompare(s, res), 0);
+
+    stringDestroy(&s);
+    stringDestroy(&res);
+    printGreen("test_stringToLower\n");
+}
+
 
 int main() {
     test_stringStartWith();
@@ -340,6 +363,8 @@ int main() {
     test_stringReplaceAll();
     test_stringReverse();
     test_stringCompare();
+    test_stringToLower(); 
+    test_stringToUpper(); 
     return 0;
 }
 
