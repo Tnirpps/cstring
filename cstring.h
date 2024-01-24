@@ -43,6 +43,7 @@ bool stringStartWithCharArr(TString s, char *pref);
 bool stringEndWith(TString s, TString pref);
 bool stringEndWithCharArr(TString s, char *pref);
 bool stringIsEqual(TString s1, TString s2);
+bool stringIsEmpty(TString s);
 bool stringIsDigits(TString s);
 bool stringIsAlphas(TString s);
 
@@ -241,6 +242,10 @@ bool stringEndWithCharArr(TString s, char *pref) {
 
 bool stringIsEqual(TString s1, TString s2) {
     return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size) == 0;
+}
+
+bool stringIsEmpty(TString s) {
+    return s.size == 0;
 }
 
 bool stringIsDigits(TString s) {

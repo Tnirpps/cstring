@@ -47,7 +47,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 - [ ] bool stringContains(TString s, TString pattern); - Check if string contains a certain substring.
 - [ ] bool stringContainsCharArr(TString s, const char *pattern); - Check if string contains a certain substring using a char array.
-- [ ] bool stringIsEmpty(TString s); - Check if the string is empty.
+- [x] bool stringIsEmpty(TString s); - Check if the string is empty.
 - [ ] bool stringIsEqualIgnoreCase(TString s1, TString s2); - Compare strings for equality, case-insensitive.
 - [ ] bool stringIsPalindrome(TString s); - Check if a string is a palindrome.
 - [ ] TStringArray stringSplit(TString s, TString delim); - Split a string into an array of strings based on a delimiter.
