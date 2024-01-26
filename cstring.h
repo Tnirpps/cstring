@@ -48,6 +48,7 @@ bool stringIsDigits(TString s);
 bool stringIsAlphas(TString s);
 
 size_t stringLen(TString s);
+size_t stringCount(TString s, char c);
 
 int stringCompare(TString s1, TString s2);
 
@@ -87,6 +88,7 @@ void stringToUpper(TString *s);
 void stringToLower(TString *s);
 void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
 void stringReverse(TString *s);
+void stringMap(TString *s, char (*func)(char));
 void stringDestroy(TString *s);
 
 #endif
@@ -159,6 +161,7 @@ int stringCompSubstr(
     const char *s1, size_t pos1, size_t len1,
     const char *s2, size_t pos2, size_t len2) {
     if (len1 > len2) return -1 * stringCompSubstr(s2, pos2, len2, s1, pos1, len1);
+    assert(s1 != NULL && s2 != NULL);
     for (size_t i = 0; i < len1; ++i) {
         if (s1[pos1 + i] != s2[pos2 + i]) {
             if (s1[pos1 + 1] < s2[pos2 + i]) return 1;
@@ -266,6 +269,15 @@ bool stringIsAlphas(TString s) {
 
 size_t stringLen(TString s) {
     return s.size;
+}
+
+size_t stringCount(TString s, char c) {
+    if (s.size == 0 || s.data == NULL) return 0;
+    size_t res = 0;
+    for (size_t i = 0; i < s.size; ++i) {
+        res += (s.data[i] == c);
+    }
+    return res;
 }
 
 int stringCompare(TString s1, TString s2) {
@@ -639,6 +651,13 @@ void stringReverse(TString *s) {
         char tmp = s->data[i];
         s->data[i] = s->data[s->size - i - 1];
         s->data[s->size - i - 1] = tmp;
+    }
+}
+
+void stringMap(TString *s, char (*func)(char)) {
+    if (s == NULL || s->size == 0 || s->data == NULL) return;
+    for (size_t i = 0; i < s->size; ++i) {
+        s->data[i] = func(s->data[i]);
     }
 }
 

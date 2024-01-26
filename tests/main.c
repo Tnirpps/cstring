@@ -343,6 +343,24 @@ void test_stringToLower() {
     printGreen("test_stringToLower\n");
 }
 
+char func(char c) {
+    if ('0' <= c  && c <= '9') {
+        return '*';
+    }
+    return c;
+}
+
+void test_stringMap() {
+    TString s   = stringInitWithCharArr("He22o Wor1d! 123\n");
+    TString res = stringInitWithCharArr("He**o Wor*d! ***\n");
+    stringMap(&s, func);
+    assertEq(stringCompare(s, res), 0);
+
+    stringDestroy(&s);
+    stringDestroy(&res);
+    printGreen("test_stringMap\n");
+}
+
 
 int main() {
     test_stringStartWith();
@@ -365,6 +383,7 @@ int main() {
     test_stringCompare();
     test_stringToLower(); 
     test_stringToUpper(); 
+    test_stringMap();
     return 0;
 }
 
