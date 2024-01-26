@@ -376,6 +376,25 @@ void test_stringContains() {
     printGreen("test_stringContains\n");
 }
 
+void test_stringIsPalindrome() {
+    TString emptyString = stringInitWithCharArr("");
+    assertEq(stringIsPalindrome(emptyString), true);
+
+    TString notPalindromeEvenSizedString = stringInitWithCharArr("banaba");
+    assertEq(stringIsPalindrome(notPalindromeEvenSizedString), false);
+
+    TString palindromeEvenSizedString = stringInitWithCharArr("abba");
+    assertEq(stringIsPalindrome(palindromeEvenSizedString), true);
+
+    TString notPalindromeOddSizedString = stringInitWithCharArr("abc");
+    assertEq(stringIsPalindrome(notPalindromeEvenSizedString), false);
+
+    TString palindromeOddSizedString = stringInitWithCharArr("abcba");
+    assertEq(stringIsPalindrome(palindromeOddSizedString), true);
+
+    printGreen("test_stringIsPalindrome\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -399,6 +418,7 @@ int main() {
     test_stringToUpper(); 
     test_stringMap();
     test_stringContains();
+    test_stringIsPalindrome();
     return 0;
 }
 
