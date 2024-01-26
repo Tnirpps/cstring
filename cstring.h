@@ -49,6 +49,7 @@ bool stringIsDigits(TString s);
 bool stringIsAlphas(TString s);
 bool stringContains(TString s, TString pattern);
 bool stringContainsCharArr(TString s, const char *pattern);
+bool stringIsPalindrome(TString s);
 
 size_t stringLen(TString s);
 size_t stringCount(TString s, char c);
@@ -285,6 +286,15 @@ bool stringContainsCharArr(TString s, const char *pattern) {
 
 size_t stringLen(TString s) {
     return s.size;
+}
+
+bool stringIsPalindrome(TString s) {
+    for (size_t i = 0; i < (s.size + 1) / 2; ++i) {
+        if (s.data[i] != s.data[s.size - i - 1]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 size_t stringCount(TString s, char c) {
