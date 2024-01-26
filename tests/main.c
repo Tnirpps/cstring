@@ -361,6 +361,20 @@ void test_stringMap() {
     printGreen("test_stringMap\n");
 }
 
+void test_stringContains() {
+    TString s   = stringInitWithCharArr("hi good looo shiii po ns skj skdjl hello wgg\n");
+    TString p1 = stringInitWithCharArr("hello");
+    TString p2 = stringInitWithCharArr("hello1");
+    
+    assertEq(stringContains(s, p1), true);
+    assertEq(stringContains(s, p2), false);
+
+    stringDestroy(&s);
+    stringDestroy(&p1);
+    stringDestroy(&p2);
+
+    printGreen("test_stringContains\n");
+}
 
 int main() {
     test_stringStartWith();
@@ -384,6 +398,7 @@ int main() {
     test_stringToLower(); 
     test_stringToUpper(); 
     test_stringMap();
+    test_stringContains();
     return 0;
 }
 

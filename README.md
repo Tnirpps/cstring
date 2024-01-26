@@ -45,8 +45,8 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## TODO List
 
-- [ ] bool stringContains(TString s, TString pattern); - Check if string contains a certain substring.
-- [ ] bool stringContainsCharArr(TString s, const char *pattern); - Check if string contains a certain substring using a char array.
+- [x] bool stringContains(TString s, TString pattern); - Check if string contains a certain substring.
+- [x] bool stringContainsCharArr(TString s, const char *pattern); - Check if string contains a certain substring using a char array.
 - [x] bool stringIsEmpty(TString s); - Check if the string is empty.
 - [ ] bool stringIsEqualIgnoreCase(TString s1, TString s2); - Compare strings for equality, case-insensitive.
 - [ ] bool stringIsPalindrome(TString s); - Check if a string is a palindrome.
@@ -66,5 +66,5 @@ Contributions are what make the open-source community such an amazing place to l
 - [ ] void stringPadRight(TString *s, size_t newLen, char padChar); - Pad the string on the right.
 - [ ] void stringRemove(TString *s, size_t pos, size_t len); - Remove a range of characters from the string.
 - [ ] void stringReplaceFirst(TString *s, const char *oldSub, const char *newSub); - Replace the first occurrence of a substring.
-- [ ] void stringSwap(TString *s1, TString *s2); - Swap the content of two strings.
+- [x] void stringSwap(TString *s1, TString *s2); - Swap the content of two strings.
 - [ ] TString stringFormat(const char *format, ...); - Create a formatted string.

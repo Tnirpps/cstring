@@ -22,6 +22,7 @@ static char ERROR_BUF[MAX_ERROR_MSG_LEN] = {0};
 
 int isError();
 const char *getErrorMsg();
+void setError(EErrorCode e);
 void clearError();
 
 
@@ -46,6 +47,8 @@ bool stringIsEqual(TString s1, TString s2);
 bool stringIsEmpty(TString s);
 bool stringIsDigits(TString s);
 bool stringIsAlphas(TString s);
+bool stringContains(TString s, TString pattern);
+bool stringContainsCharArr(TString s, const char *pattern);
 
 size_t stringLen(TString s);
 size_t stringCount(TString s, char c);
@@ -80,6 +83,7 @@ void stringDebug(TString s);
     TString stringMap(TString s, char (*f)(char));
 */
 
+void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
 void stringTrimLeft(TString *s);
 void stringTrimRight(TString *s);
@@ -129,8 +133,12 @@ const char * getErrorMsg() {
 }
 */
 
+void setError(EErrorCode e) {
+    ERROR_CODE = e;
+}
+
 void clearError() {
-    ERROR_CODE = ERR_NO_ERROR;
+    setError(ERR_NO_ERROR);
     *ERROR_BUF = '\0';
 }
 
@@ -184,7 +192,7 @@ void stringIncreaseCap(TString *s) {
     if (newCap == 0) newCap = 1;
     char *newData = (char *) malloc(sizeof(char) * newCap);      
     if (newData == NULL) {
-        ERROR_CODE = ERR_ALLOCATE_SPACE;
+        setError(ERR_ALLOCATE_SPACE);
         return;
     }
 
@@ -252,7 +260,7 @@ bool stringIsEmpty(TString s) {
 }
 
 bool stringIsDigits(TString s) {
-    if (s.data == NULL || s.size == 0) return false;
+    if (s.size == 0) return false;
     for (size_t i = 0; i < s.size; ++i) {
         if (!stringCharIsDigit(s.data[i])) return false;
     }
@@ -260,11 +268,19 @@ bool stringIsDigits(TString s) {
 }
 
 bool stringIsAlphas(TString s) {
-    if (s.data == NULL || s.size == 0) return false;
+    if (s.size == 0) return false;
     for (size_t i = 0; i < s.size; ++i) {
         if (!stringCharIsAlpha(s.data[i])) return false;
     }
     return true;
+}
+
+bool stringContains(TString s, TString pattern) {
+    return stringFindFirst(s, pattern) > 0;
+}
+
+bool stringContainsCharArr(TString s, const char *pattern) {
+    return stringFindFirstCharArr(s, pattern) > 0;
 }
 
 size_t stringLen(TString s) {
@@ -272,7 +288,7 @@ size_t stringLen(TString s) {
 }
 
 size_t stringCount(TString s, char c) {
-    if (s.size == 0 || s.data == NULL) return 0;
+    if (s.size == 0) return 0;
     size_t res = 0;
     for (size_t i = 0; i < s.size; ++i) {
         res += (s.data[i] == c);
@@ -298,6 +314,10 @@ int64_t stringFindFirst(TString s, TString pattern) {
 }
 
 int64_t stringFindFirstCharArr(TString s, const char *pattern) {
+    if (pattern == NULL) {
+        setError(ERR_NULL_POINTER);
+        return -1;
+    }
     int64_t res = 0;
     size_t patternLen = stringLenCharArr(pattern);
     for (size_t i = 0; i < s.size; ++i) {
@@ -315,7 +335,7 @@ TString stringInit(size_t capacity) {
     TString s = {0};
     s.data = (char *) malloc(sizeof(char) * capacity);
     if (s.data == NULL) {
-        ERROR_CODE = ERR_ALLOCATE_SPACE;
+        setError(ERR_ALLOCATE_SPACE);
         return s;
     }
     s.capacity = capacity;
@@ -340,6 +360,7 @@ TString stringRand(size_t size) {
 }
 
 TString stringInitWithCharArr(const char *s) {
+    if (s == NULL) return (TString){0};
     clearError();
     size_t len = stringLenCharArr(s); 
     TString res = stringInit(len);
@@ -414,6 +435,10 @@ TString stringConcat(TString s1, TString s2) {
 }
 
 TString stringArrConcat(const TString *s, size_t count) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return (TString) {0};
+    }
     clearError();
     size_t totalSize = 0;
     for (size_t i = 0; i < count; ++i) {
@@ -456,6 +481,11 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim) {
 }
 
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim) {
+    if (s == NULL || delim == NULL) {
+        setError(ERR_NULL_POINTER);
+        return (TString) {0};
+    }
+
     clearError();
     size_t totalSize = 0;
     size_t delimSize = stringLenCharArr(delim);
@@ -494,6 +524,10 @@ TString stringSubstring(TString s, size_t pos, size_t len) {
 }
 
 void stringScan(TString *s) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
     clearError();
     stringDestroy(s);
     char c = getchar();
@@ -501,7 +535,7 @@ void stringScan(TString *s) {
         c = getchar();
     }
     if (c == EOF) {
-        ERROR_CODE = ERR_EOF_NOT_EXPECTED;
+        setError(ERR_EOF_NOT_EXPECTED);
         return;
     }
 
@@ -533,9 +567,19 @@ void stringDebug(TString s) {
     }
 }
 
+void stringSwap(TString *s1, TString *s2) {
+    if (s1 == NULL || s2 == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    TString tmp = *s1;
+    *s1 = *s2;
+    *s2 = tmp;
+}
+
 void stringPushBack(TString *s, char c) {
     if (s == NULL) {
-        ERROR_CODE = ERR_NULL_POINTER;
+        setError(ERR_NULL_POINTER);
         return;
     }
 
@@ -556,7 +600,7 @@ void stringPushBack(TString *s, char c) {
 }
 
 void stringTrimLeft(TString *s) {
-    if (s == NULL || s->data == NULL || s->size == 0) return;
+    if (s == NULL || s->size == 0) return;
 
     size_t start = 0;
     while (start < s->size && stringCharOneOf(s->data[start], " \t\n")) {
@@ -570,7 +614,7 @@ void stringTrimLeft(TString *s) {
 }
 
 void stringTrimRight(TString *s) {
-    if (s == NULL || s->data == NULL || s->size == 0) return;
+    if (s == NULL || s->size == 0) return;
 
     int end = s->size - 1;
     while (end >= 0 && stringCharOneOf(s->data[end], " \t\n")) {
@@ -585,7 +629,7 @@ void stringTrim(TString *s) {
 }
 
 void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
-    if (s == NULL || s->data == NULL || stringFindFirstCharArr(*s, oldS) < 0) return;
+    if (s == NULL || s->size == 0 || newS == NULL || stringFindFirstCharArr(*s, oldS) < 0) return;
 
     TString res = {0};
     size_t pos = 0;
@@ -632,21 +676,21 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
 }
 
 void stringToUpper(TString *s) {
-    if (s == NULL || s->data == NULL || s->size == 0) return;
+    if (s == NULL || s->size == 0) return;
     for (size_t i = 0; i < s->size; ++i) {
         s->data[i] = stringCharToUpper(s->data[i]);
     }
 }
 
 void stringToLower(TString *s) {
-    if (s == NULL || s->data == NULL || s->size == 0) return;
+    if (s == NULL || s->size == 0) return;
     for (size_t i = 0; i < s->size; ++i) {
         s->data[i] = stringCharToLower(s->data[i]);
     }
 }
 
 void stringReverse(TString *s) {
-    if (s == NULL || s->data == NULL || s->size == 0) return;
+    if (s == NULL || s->size == 0) return;
     for (size_t i = 0; i < (s->size) / 2; ++i) {
         char tmp = s->data[i];
         s->data[i] = s->data[s->size - i - 1];
@@ -655,7 +699,7 @@ void stringReverse(TString *s) {
 }
 
 void stringMap(TString *s, char (*func)(char)) {
-    if (s == NULL || s->size == 0 || s->data == NULL) return;
+    if (s == NULL || s->size == 0 || func == NULL) return;
     for (size_t i = 0; i < s->size; ++i) {
         s->data[i] = func(s->data[i]);
     }
