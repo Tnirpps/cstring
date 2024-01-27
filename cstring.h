@@ -92,6 +92,7 @@ void stringToUpper(TString *s);
 void stringToLower(TString *s);
 void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
 void stringReverse(TString *s);
+void stringFilter(TString *s, bool (*predicate)(char));
 void stringMap(TString *s, char (*func)(char));
 void stringDestroy(TString *s);
 
@@ -709,6 +710,20 @@ void stringDestroy(TString *s) {
     if (s == NULL) return;
     free(s->data);
     *s = (TString) {0};
+}
+
+void stringFilter(TString *s, bool (*predicate)(char)) {
+    size_t i = 0, j = 0;
+
+    while (j < s->size) {
+        if (predicate(s->data[j])) {
+            s->data[i] = s->data[j];
+            ++i;
+        }
+        ++j;
+    }
+
+    s->size = i;
 }
 
 #endif
