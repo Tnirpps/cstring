@@ -58,7 +58,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [x] size_t stringCount(TString s, char c); - Count occurrences of a character.
 - [ ] size_t stringCountSubstring(TString s, TString pattern); - Count occurrences of a substring.
 - [ ] void stringCapitalize(TString *s); - Capitalize the first letter of each word.
-- [ ] void stringFilter(TString *s, bool (*predicate)(char)); - Remove characters not satisfying a predicate.
+- [x] void stringFilter(TString *s, bool (*predicate)(char)); - Remove characters not satisfying a predicate.
 - [ ] void stringInsert(TString *s, size_t pos, TString toInsert); - Insert a substring at a specified position.
 - [ ] void stringInsertCharArr(TString *s, size_t pos, const char *toInsert); - Insert a substring from a char array.
 - [x] void stringMap(TString *s, char (*func)(char)); - Apply a function to every character of the string.
