@@ -376,6 +376,41 @@ void test_stringContains() {
     printGreen("test_stringContains\n");
 }
 
+bool acceptAll(char c) {
+    return true;
+}
+
+bool skipAll(char c) {
+    return false;
+}
+
+bool acceptOnlyDigit(char c) {
+    return ('0' <= c) && (c <= '9');
+}
+
+void test_stringFilter() {
+    TString emptyString = stringInitWithCharArr("");
+    stringFilter(&emptyString, acceptAll);
+    assertEq(stringIsEmpty(emptyString), true);
+
+    TString s1 = stringInitWithCharArr("banana banana");
+    TString s1Expected = stringDeepCopy(s1);
+    stringFilter(&s1, acceptAll);
+    assertEq(stringCompare(s1, s1Expected), 0);
+
+    TString s2 = stringInitWithCharArr("abc123def");
+    TString s2Expected = stringInitWithCharArr("123");
+    stringFilter(&s2, acceptOnlyDigit);
+    assertEq(stringCompare(s2, s2Expected), 0);
+
+    stringDestroy(&emptyString);
+    stringDestroy(&s1);
+    stringDestroy(&s1Expected);
+    stringDestroy(&s2);
+    stringDestroy(&s2Expected);
+    printGreen("test_stringFilter\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -399,6 +434,7 @@ int main() {
     test_stringToUpper(); 
     test_stringMap();
     test_stringContains();
+    test_stringFilter();
     return 0;
 }
 
