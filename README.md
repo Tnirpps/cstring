@@ -49,7 +49,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [x] bool stringContainsCharArr(TString s, const char *pattern); - Check if string contains a certain substring using a char array.
 - [x] bool stringIsEmpty(TString s); - Check if the string is empty.
 - [ ] bool stringIsEqualIgnoreCase(TString s1, TString s2); - Compare strings for equality, case-insensitive.
-- [ ] bool stringIsPalindrome(TString s); - Check if a string is a palindrome.
+- [x] bool stringIsPalindrome(TString s); - Check if a string is a palindrome.
 - [ ] TStringArray stringSplit(TString s, TString delim); - Split a string into an array of strings based on a delimiter.
 - [ ] TStringArray stringSplitCharArr(TString s, const char *delim); - Split string using a char array delimiter.
 - [ ] double stringToDouble(TString s); - Convert a string to a double.
