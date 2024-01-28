@@ -713,7 +713,8 @@ void stringDestroy(TString *s) {
 }
 
 void stringFilter(TString *s, bool (*predicate)(char)) {
-    size_t i = 0, j = 0;
+    size_t i = 0;
+    size_t j = 0;
 
     while (j < s->size) {
         if (predicate(s->data[j])) {
