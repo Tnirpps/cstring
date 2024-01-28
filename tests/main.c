@@ -379,18 +379,23 @@ void test_stringContains() {
 void test_stringIsPalindrome() {
     TString emptyString = stringInitWithCharArr("");
     assertEq(stringIsPalindrome(emptyString), true);
+    stringDestroy(&emptyString);
 
     TString notPalindromeEvenSizedString = stringInitWithCharArr("banaba");
     assertEq(stringIsPalindrome(notPalindromeEvenSizedString), false);
+    stringDestroy(&notPalindromeEvenSizedString);
 
     TString palindromeEvenSizedString = stringInitWithCharArr("abba");
     assertEq(stringIsPalindrome(palindromeEvenSizedString), true);
+    stringDestroy(&palindromeEvenSizedString);
 
     TString notPalindromeOddSizedString = stringInitWithCharArr("abc");
-    assertEq(stringIsPalindrome(notPalindromeEvenSizedString), false);
+    assertEq(stringIsPalindrome(notPalindromeOddSizedString), false);
+    stringDestroy(&notPalindromeOddSizedString);
 
     TString palindromeOddSizedString = stringInitWithCharArr("abcba");
     assertEq(stringIsPalindrome(palindromeOddSizedString), true);
+    stringDestroy(&palindromeOddSizedString);
 
     printGreen("test_stringIsPalindrome\n");
 }
