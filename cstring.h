@@ -79,15 +79,12 @@ void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
 
-// TODO:
-/*
-    void stringReduce(TString *s, int64_t (*f)(char, int64_t), int64_t init);
-    TString stringMap(TString s, char (*f)(char));
-*/
 
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
+void stringPushFront(TString *s, char c);
 void stringPopBack(TString *s);
+void stringPopFront(TString *s);
 void stringTrimLeft(TString *s);
 void stringTrimRight(TString *s);
 void stringTrim(TString *s);
@@ -185,6 +182,7 @@ int stringCompSubstr(
 }
 
 size_t stringLenCharArr(const char *s) {
+    if (s == NULL) return 0;
     const char *begin = s;
     while (*s != '\0') ++s;
     return (size_t) (s - begin);
@@ -471,6 +469,27 @@ TString stringArrConcat(const TString *s, size_t count) {
     return res;
 }
 
+TString stringJoin(TString s1, TString s2, TString delim) {
+    clearError();
+    TString res = stringInit(s1.size + delim.size + s2.size);
+    if (isError()) return (TString){0};
+
+    for (size_t i = 0; i < s1.size; ++i) {
+        res.data[i] = s1.data[i];
+    }
+
+    for (size_t i = 0; i < delim.size; ++i) {
+        res.data[s1.size + i] = delim.data[i];
+    }
+
+    for (size_t i = 0; i < s2.size; ++i) {
+        res.data[s1.size + delim.size + i] = s2.data[i];
+    }
+    res.size = s1.size + delim.size + s2.size;
+
+    return res;
+}
+
 TString stringJoinCharArr(TString s1, TString s2, const char *delim) {
     clearError();
     size_t delimSize = stringLenCharArr(delim);
@@ -492,6 +511,38 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim) {
 
     return res;
 }
+
+TString stringArrJoin(const TString *s, size_t count, TString delim) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return (TString) {0};
+    }
+
+    clearError();
+    size_t totalSize = 0;
+    for (size_t i = 0; i < count; ++i) {
+        totalSize += s[i].size;
+        if (i + 1 < count) totalSize += delim.size;
+    }
+
+    TString res = stringInit(totalSize);
+    if (isError()) return (TString){0};
+
+    size_t ind = 0;
+    for (size_t i = 0; i < count; ++i) {
+        for (size_t j = 0; j < s[i].size; ++j) {
+            res.data[ind++] = s[i].data[j];
+        }
+        if (i + 1 < count) {
+            for (size_t j = 0; j < delim.size; ++j) {
+                res.data[ind++] = delim.data[j];
+            }
+        }
+    }
+    res.size = totalSize;
+    return res;
+}
+
 
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim) {
     if (s == NULL || delim == NULL) {
@@ -610,6 +661,12 @@ void stringPushBack(TString *s, char c) {
     s->size++;
 }
 
+void stringPushFront(TString *s, char c) {
+    stringReverse(s);
+    stringPushBack(s, c);
+    stringReverse(s);
+}
+
 void stringPopBack(TString *s) {
     if (s == NULL) {
         setError(ERR_NULL_POINTER);
@@ -618,6 +675,21 @@ void stringPopBack(TString *s) {
     if (stringIsEmpty(*s)) {
         setError(ERR_EMPTY_STRING_POP);
         return;
+    }
+    --(s->size);
+}
+
+void stringPopFront(TString *s) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    if (stringIsEmpty(*s)) {
+        setError(ERR_EMPTY_STRING_POP);
+        return;
+    }
+    for (size_t i = 1; i < s->size; ++i) {
+        s->data[i - 1] = s->data[i];
     }
     --(s->size);
 }

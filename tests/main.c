@@ -6,7 +6,6 @@
 #include "../cstring.h"
 
 
-
 #define assertEq(X, Y)                                \
     while((X) != (Y)){                                \
     printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
@@ -84,7 +83,6 @@ void test_stringEndWithCharArr() {
 
 void test_stringLen() {
     TString str = stringInitWithCharArr("Hello");
-
     assertEq(stringLen(str), 5);
 
     TString emptyString = stringInitWithCharArr("");
@@ -98,9 +96,7 @@ void test_stringLen() {
 
 void test_stringFindFirst() {
     TString str = stringInitWithCharArr("Hello, World!");
-    //TString pattern = stringInitWithCharArr("llo");
     TString pattern = stringInitWithCharArr("World");
-
     assertEq(stringFindFirst(str, pattern), 7);
 
     TString nonExistingPattern = stringInitWithCharArr("XYZ");
