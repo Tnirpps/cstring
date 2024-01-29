@@ -9,11 +9,12 @@
 typedef enum EErrorCode {
     ERR_NO_ERROR,
     ERR_ALLOCATE_SPACE,
-    ERR_NULL_POINTER,
-    ERR_INVALID_STATE,
     ERR_BUFFER_OVERFLOW,
-    ERR_NUMBER_OVERFLOW,
+    ERR_EMPTY_STRING_POP,
     ERR_EOF_NOT_EXPECTED,
+    ERR_INVALID_STATE,
+    ERR_NULL_POINTER,
+    ERR_NUMBER_OVERFLOW,
 } EErrorCode;
 
 #define MAX_ERROR_MSG_LEN 300
@@ -86,6 +87,7 @@ void stringDebug(TString s);
 
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
+void stringPopBack(TString *s);
 void stringTrimLeft(TString *s);
 void stringTrimRight(TString *s);
 void stringTrim(TString *s);
@@ -600,14 +602,24 @@ void stringPushBack(TString *s, char c) {
         if (isError()) return;
     }
 
-    assert(s->capacity >= s->size && s->data != NULL);
-
-    if (s->size == s->capacity) {
+    if (s->size >= s->capacity) {
         stringIncreaseCap(s);
     }
 
     s->data[s->size] = c;
     s->size++;
+}
+
+void stringPopBack(TString *s) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    if (stringIsEmpty(*s)) {
+        setError(ERR_EMPTY_STRING_POP);
+        return;
+    }
+    --(s->size);
 }
 
 void stringTrimLeft(TString *s) {
