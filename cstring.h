@@ -172,7 +172,7 @@ int stringCompSubstr(
     const char *s1, size_t pos1, size_t len1,
     const char *s2, size_t pos2, size_t len2,
     bool caseSensative) {
-    if (len1 > len2) return -1 * stringCompSubstr(s2, pos2, len2, s1, pos1, len1);
+    if (len1 > len2) return -1 * stringCompSubstr(s2, pos2, len2, s1, pos1, len1, caseSensative);
     assert(s1 != NULL && s2 != NULL);
     for (size_t i = 0; i < len1; ++i) {
         if (caseSensative) {
@@ -181,7 +181,7 @@ int stringCompSubstr(
                 return -1;
             }
         } else {
-            if (stringCharToLower([pos1 + i]) != stringCharToLower(s2[pos2 + i])) {
+            if (stringCharToLower(s1[pos1 + i]) != stringCharToLower(s2[pos2 + i])) {
                 if (stringCharToLower(s1[pos1 + 1]) < stringCharToLower(s2[pos2 + i])) return 1;
                 return -1;
             }
@@ -326,7 +326,7 @@ size_t stringCount(TString s, char c) {
 }
 
 int stringCompare(TString s1, TString s2) {
-    return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size);
+    return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size, false /* caseSensative */);
 }
 
 int64_t stringFindFirst(TString s, TString pattern) {
@@ -812,7 +812,7 @@ void stringReverse(TString *s) {
 }
 
 void stringFilter(TString *s, bool (*predicate)(char)) {
-    if (s == NULL || func == NULL) {
+    if (s == NULL || predicate == NULL) {
         setError(ERR_NULL_POINTER);
         return;
     }
