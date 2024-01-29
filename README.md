@@ -48,7 +48,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [x] bool stringContains(TString s, TString pattern); - Check if string contains a certain substring.
 - [x] bool stringContainsCharArr(TString s, const char *pattern); - Check if string contains a certain substring using a char array.
 - [x] bool stringIsEmpty(TString s); - Check if the string is empty.
-- [ ] bool stringIsEqualIgnoreCase(TString s1, TString s2); - Compare strings for equality, case-insensitive.
+- [x] bool stringIsEqualIgnoreCase(TString s1, TString s2); - Compare strings for equality, case-insensitive.
 - [x] bool stringIsPalindrome(TString s); - Check if a string is a palindrome.
 - [ ] TStringArray stringSplit(TString s, TString delim); - Split a string into an array of strings based on a delimiter.
 - [ ] TStringArray stringSplitCharArr(TString s, const char *delim); - Split string using a char array delimiter.
@@ -62,6 +62,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [ ] void stringInsert(TString *s, size_t pos, TString toInsert); - Insert a substring at a specified position.
 - [ ] void stringInsertCharArr(TString *s, size_t pos, const char *toInsert); - Insert a substring from a char array.
 - [x] void stringMap(TString *s, char (*func)(char)); - Apply a function to every character of the string.
+- [x] void stringMapIndex(TString *s, char (*func)(size_t, char)); - Apply a function to every character of the string with access to its index.
 - [ ] void stringPadLeft(TString *s, size_t newLen, char padChar); - Pad the string on the left to a certain length.
 - [ ] void stringPadRight(TString *s, size_t newLen, char padChar); - Pad the string on the right.
 - [ ] void stringRemove(TString *s, size_t pos, size_t len); - Remove a range of characters from the string.

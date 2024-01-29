@@ -45,6 +45,7 @@ bool stringStartWithCharArr(TString s, char *pref);
 bool stringEndWith(TString s, TString pref);
 bool stringEndWithCharArr(TString s, char *pref);
 bool stringIsEqual(TString s1, TString s2);
+bool stringIsEqualIgnoreCase(TString s1, TString s2);
 bool stringIsEmpty(TString s);
 bool stringIsDigits(TString s);
 bool stringIsAlphas(TString s);
@@ -94,6 +95,7 @@ void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
 void stringReverse(TString *s);
 void stringFilter(TString *s, bool (*predicate)(char));
 void stringMap(TString *s, char (*func)(char));
+void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringDestroy(TString *s);
 
 #endif
@@ -168,14 +170,23 @@ void stringCopyCharArr(TString *dest, const char *s, size_t n) {
 
 int stringCompSubstr(
     const char *s1, size_t pos1, size_t len1,
-    const char *s2, size_t pos2, size_t len2) {
+    const char *s2, size_t pos2, size_t len2,
+    bool caseSensative) {
     if (len1 > len2) return -1 * stringCompSubstr(s2, pos2, len2, s1, pos1, len1);
     assert(s1 != NULL && s2 != NULL);
     for (size_t i = 0; i < len1; ++i) {
-        if (s1[pos1 + i] != s2[pos2 + i]) {
-            if (s1[pos1 + 1] < s2[pos2 + i]) return 1;
-            return -1;
+        if (caseSensative) {
+            if (s1[pos1 + i] != s2[pos2 + i]) {
+                if (s1[pos1 + 1] < s2[pos2 + i]) return 1;
+                return -1;
+            }
+        } else {
+            if (stringCharToLower([pos1 + i]) != stringCharToLower(s2[pos2 + i])) {
+                if (stringCharToLower(s1[pos1 + 1]) < stringCharToLower(s2[pos2 + i])) return 1;
+                return -1;
+            }
         }
+        
     }
     if (len1 != len2) return -1;
     return 0;
@@ -231,30 +242,37 @@ char stringCharToUpper(char c) {
 
 bool stringStartWith(TString s, TString pref) {
     if (s.size < pref.size) return false;
-    return stringCompSubstr(s.data, 0, pref.size, pref.data, 0, pref.size) == 0;
+    return stringCompSubstr(s.data, 0, pref.size, pref.data,
+        0, pref.size, true /* caseSensative */) == 0;
 }
 
 bool stringStartWithCharArr(TString s, char *pref) {
     if (pref == NULL) return true;
     size_t len = stringLenCharArr(pref);
     if (s.size < len) return false;
-    return stringCompSubstr(s.data, 0, len, pref, 0, len) == 0;
+    return stringCompSubstr(s.data, 0, len, pref, 0, len, true /* caseSensative */) == 0;
 }
 
 bool stringEndWith(TString s, TString pref) {
     if (s.size < pref.size) return false;
-    return stringCompSubstr(s.data, s.size - pref.size, pref.size, pref.data, 0, pref.size) == 0;
+    return stringCompSubstr(
+        s.data, s.size - pref.size, pref.size,
+        pref.data, 0, pref.size, true /* caseSensative */) == 0;
 }
 
 bool stringEndWithCharArr(TString s, char *pref) {
     if (pref == NULL) return true;
     size_t len = stringLenCharArr(pref);
     if (s.size < len) return false;
-    return stringCompSubstr(s.data, s.size - len, len, pref, 0, len) == 0;
+    return stringCompSubstr(s.data, s.size - len, len, pref, 0, len, true /* caseSensative */) == 0;
 }
 
 bool stringIsEqual(TString s1, TString s2) {
-    return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size) == 0;
+    return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size, true /* caseSensative */) == 0;
+}
+
+bool stringIsEqualIgnoreCase(TString s1, TString s2) {
+    return stringCompSubstr(s1.data, 0, s1.size, s2.data, 0, s2.size, false /* caseSensative */) == 0;
 }
 
 bool stringIsEmpty(TString s) {
@@ -793,20 +811,11 @@ void stringReverse(TString *s) {
     }
 }
 
-void stringMap(TString *s, char (*func)(char)) {
-    if (s == NULL || s->size == 0 || func == NULL) return;
-    for (size_t i = 0; i < s->size; ++i) {
-        s->data[i] = func(s->data[i]);
-    }
-}
-
-void stringDestroy(TString *s) {
-    if (s == NULL) return;
-    free(s->data);
-    *s = (TString) {0};
-}
-
 void stringFilter(TString *s, bool (*predicate)(char)) {
+    if (s == NULL || func == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
     size_t i = 0;
     size_t j = 0;
 
@@ -820,6 +829,33 @@ void stringFilter(TString *s, bool (*predicate)(char)) {
 
     s->size = i;
 }
+
+void stringMap(TString *s, char (*func)(char)) {
+    if (s == NULL || func == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    for (size_t i = 0; i < s->size; ++i) {
+        s->data[i] = func(s->data[i]);
+    }
+}
+
+void stringMapIndex(TString *s, char (*func)(size_t, char)) {
+    if (s == NULL || func == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    for (size_t i = 0; i < s->size; ++i) {
+        s->data[i] = func(i, s->data[i]);
+    }
+}
+
+void stringDestroy(TString *s) {
+    if (s == NULL) return;
+    free(s->data);
+    *s = (TString) {0};
+}
+
 
 #endif
 
