@@ -409,6 +409,7 @@ void test_stringFilter() {
     stringDestroy(&s2);
     stringDestroy(&s2Expected);
     printGreen("test_stringFilter\n");
+}
 
 void test_stringIsPalindrome() {
     TString emptyString = stringInitWithCharArr("");
