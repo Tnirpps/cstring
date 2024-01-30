@@ -456,6 +456,21 @@ void test_stringPad() {
     stringDestroy(&str);
     printGreen("test_stringPad\n");
 }
+
+void test_stringRemove() {
+    TString s = stringInitWithCharArr("Hello, World! testing remove");
+    
+    stringRemove(&s, stringFindFirstCharArr(s, "test"), 8);
+    assertEq(strncmp(s.data, "Hello, World! remove", stringLen(s)), 0);
+
+    stringRemove(&s, 0, 10000);
+    assertEq(stringIsEmpty(s), true);
+
+    stringDestroy(&s);
+
+    printGreen("test_stringRemove\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -482,6 +497,7 @@ int main() {
     test_stringFilter();
     test_stringIsPalindrome();
     test_stringPad();
+    test_stringRemove();
     return 0;
 }
 

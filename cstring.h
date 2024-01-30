@@ -98,6 +98,7 @@ void stringReverse(TString *s);
 void stringFilter(TString *s, bool (*predicate)(char));
 void stringMap(TString *s, char (*func)(char));
 void stringMapIndex(TString *s, char (*func)(size_t, char));
+void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
 
 #endif
@@ -875,6 +876,20 @@ void stringMapIndex(TString *s, char (*func)(size_t, char)) {
     for (size_t i = 0; i < s->size; ++i) {
         s->data[i] = func(i, s->data[i]);
     }
+}
+
+void stringRemove(TString *s, size_t pos, size_t len) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+
+    if (pos >= s->size) return;
+    if (len > s->size - pos) len = s->size - pos;
+    for (size_t i = pos; i + len < s->size; ++i) {
+        s->data[i] = s->data[i + len];
+    }
+    s->size -= len;
 }
 
 void stringDestroy(TString *s) {

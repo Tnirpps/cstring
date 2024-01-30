@@ -65,7 +65,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [x] void stringMapIndex(TString *s, char (*func)(size_t, char)); - Apply a function to every character of the string with access to its index.
 - [x] void stringPadLeft(TString *s, size_t newLen, char padChar); - Pad the string on the left to a certain length.
 - [x] void stringPadRight(TString *s, size_t newLen, char padChar); - Pad the string on the right.
-- [ ] void stringRemove(TString *s, size_t pos, size_t len); - Remove a range of characters from the string.
+- [x] void stringRemove(TString *s, size_t pos, size_t len); - Remove a range of characters from the string.
 - [ ] void stringReplaceFirst(TString *s, const char *oldSub, const char *newSub); - Replace the first occurrence of a substring.
 - [x] void stringSwap(TString *s1, TString *s2); - Swap the content of two strings.
 - [ ] TString stringFormat(const char *format, ...); - Create a formatted string.
