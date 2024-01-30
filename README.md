@@ -37,6 +37,7 @@ stringDestroy(&myString);
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
+0. Read [coding conventions](https://github.com/Tnirpps/cstring/blob/main/CONTRIBUTING.md)
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
