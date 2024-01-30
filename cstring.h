@@ -89,6 +89,8 @@ void stringPopFront(TString *s);
 void stringTrimLeft(TString *s);
 void stringTrimRight(TString *s);
 void stringTrim(TString *s);
+void stringPadRight(TString *s, size_t newLen, char padChar); 
+void stringPadLeft(TString *s, size_t newLen, char padChar); 
 void stringToUpper(TString *s);
 void stringToLower(TString *s);
 void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
@@ -739,6 +741,31 @@ void stringTrimRight(TString *s) {
 void stringTrim(TString *s) {
     stringTrimRight(s);
     stringTrimLeft(s);
+}
+
+void stringPadRight(TString *s, size_t newLen, char padChar) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    if (s->size >= newLen) return;
+    while (s->size < newLen) {
+        clearError();
+        stringPushBack(s, padChar);
+        if (isError()) return;
+    }
+    s->size = newLen;
+}
+
+void stringPadLeft(TString *s, size_t newLen, char padChar) {
+    if (s == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    if (s->size >= newLen) return;
+    stringReverse(s);
+    stringPadRight(s, newLen, padChar);
+    stringReverse(s);
 }
 
 void stringReplaceAll(TString *s, const char *oldS, const char *newS) {

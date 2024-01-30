@@ -431,6 +431,31 @@ void test_stringIsPalindrome() {
     printGreen("test_stringIsPalindrome\n");
 }
 
+void test_stringPad() {
+    TString str = stringInitWithCharArr("Hello, World!");
+    stringPadLeft(&str, 20, ' ');
+
+    assertEq(stringLen(str), 20);
+    assertEq(strncmp(str.data, "       Hello, World!", stringLen(str)), 0);
+    
+    stringPadLeft(&str, 10, ' ');
+    assertEq(stringLen(str), 20);
+    assertEq(strncmp(str.data, "       Hello, World!", stringLen(str)), 0);
+
+    stringTrim(&str);
+
+    stringPadRight(&str, 20, ' ');
+
+    assertEq(stringLen(str), 20);
+    assertEq(strncmp(str.data, "Hello, World!       ", stringLen(str)), 0);
+    
+    stringPadRight(&str, 10, ' ');
+    assertEq(stringLen(str), 20);
+    assertEq(strncmp(str.data, "Hello, World!       ", stringLen(str)), 0);
+    
+    stringDestroy(&str);
+    printGreen("test_stringPad\n");
+}
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -456,6 +481,7 @@ int main() {
     test_stringContains();
     test_stringFilter();
     test_stringIsPalindrome();
+    test_stringPad();
     return 0;
 }
 
