@@ -395,9 +395,16 @@ int64_t stringToInt(TString s) {
 
     int64_t val = 0;
     while( *str != '\0' ) {
-        val = val * 10 + stringCharToInt64(*str);
+        int64_t digit = stringCharToInt64(*str);
+        // check for non numeric characters in string
+        if(digit == -1) {
+            setError(ERR_INVALID_NUMBER_REPR);
+            return 0;
+        }
 
-        // overflow
+        val = val * 10 + digit;
+
+        // check for integer overflow
         if(val < 0) {
             setError(ERR_NUMBER_OVERFLOW);
             return val;
@@ -409,7 +416,7 @@ int64_t stringToInt(TString s) {
 
     // free(strlen) throws an exception here
     // The reason is that the pointer is incremented each iteration
-    // And for succesful deallocation it should point to the address
+    // And for succesful deallocation it should point to the same address
     // of the memory that malloc returned
     free(str - len);
 
