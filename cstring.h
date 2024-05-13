@@ -1,10 +1,11 @@
 #ifndef CSTRING_LIB
 #define CSTRING_LIB
 
+#include <assert.h>
+#include <inttypes.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
 
 typedef enum EErrorCode {
     ERR_NO_ERROR,
@@ -26,13 +27,11 @@ const char *getErrorMsg();
 void setError(EErrorCode e);
 void clearError();
 
-
 typedef struct TString {
     char *data;
     size_t size;
     size_t capacity;
 } TString;
-
 
 bool stringCharIsDigit(char c);
 bool stringCharIsAlpha(char c);
@@ -75,11 +74,9 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim);
 TString stringArrJoin(const TString *s, size_t count, TString delim);
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim);
 
-
 void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
-
 
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
@@ -89,8 +86,8 @@ void stringPopFront(TString *s);
 void stringTrimLeft(TString *s);
 void stringTrimRight(TString *s);
 void stringTrim(TString *s);
-void stringPadRight(TString *s, size_t newLen, char padChar); 
-void stringPadLeft(TString *s, size_t newLen, char padChar); 
+void stringPadRight(TString *s, size_t newLen, char padChar);
+void stringPadLeft(TString *s, size_t newLen, char padChar);
 void stringToUpper(TString *s);
 void stringToLower(TString *s);
 void stringReplaceAll(TString *s, const char *oldSub, const char *newSub);
@@ -101,13 +98,14 @@ void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
 
+double stringToDouble(TString s);
+
 #endif
 
 // for testing:
 #define CSTRING_IMPLEMENTATION
 
 #ifdef CSTRING_IMPLEMENTATION
-
 
 int isError() {
     return (ERROR_CODE != ERR_NO_ERROR);
@@ -189,7 +187,6 @@ int stringCompSubstr(
                 return -1;
             }
         }
-        
     }
     if (len1 != len2) return -1;
     return 0;
@@ -199,28 +196,26 @@ size_t stringLenCharArr(const char *s) {
     if (s == NULL) return 0;
     const char *begin = s;
     while (*s != '\0') ++s;
-    return (size_t) (s - begin);
+    return (size_t)(s - begin);
 }
 
 void stringIncreaseCap(TString *s) {
     assert(s != NULL);
     size_t newCap = s->capacity * 2;
     if (newCap == 0) newCap = 1;
-    char *newData = (char *) malloc(sizeof(char) * newCap);      
+    char *newData = (char *)malloc(sizeof(char) * newCap);
     if (newData == NULL) {
         setError(ERR_ALLOCATE_SPACE);
         return;
     }
 
-    swapPtr((void**)&s->data, (void**)&newData);
+    swapPtr((void **)&s->data, (void **)&newData);
     stringCopyCharArr(s, newData, s->size);
     free(newData);
-    s->capacity  = newCap;
+    s->capacity = newCap;
 }
 
-
-
-// import 
+// import
 
 bool stringCharIsDigit(char c) {
     return ('0' <= c && c <= '9');
@@ -246,7 +241,7 @@ char stringCharToUpper(char c) {
 bool stringStartWith(TString s, TString pref) {
     if (s.size < pref.size) return false;
     return stringCompSubstr(s.data, 0, pref.size, pref.data,
-        0, pref.size, true /* caseSensative */) == 0;
+                            0, pref.size, true /* caseSensative */) == 0;
 }
 
 bool stringStartWithCharArr(TString s, char *pref) {
@@ -259,8 +254,8 @@ bool stringStartWithCharArr(TString s, char *pref) {
 bool stringEndWith(TString s, TString pref) {
     if (s.size < pref.size) return false;
     return stringCompSubstr(
-        s.data, s.size - pref.size, pref.size,
-        pref.data, 0, pref.size, true /* caseSensative */) == 0;
+               s.data, s.size - pref.size, pref.size,
+               pref.data, 0, pref.size, true /* caseSensative */) == 0;
 }
 
 bool stringEndWithCharArr(TString s, char *pref) {
@@ -360,12 +355,12 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
         }
         if (match == patternLen) return i;
     }
-    return -1; 
+    return -1;
 }
 
 TString stringInit(size_t capacity) {
     TString s = {0};
-    s.data = (char *) malloc(sizeof(char) * capacity);
+    s.data = (char *)malloc(sizeof(char) * capacity);
     if (s.data == NULL) {
         setError(ERR_ALLOCATE_SPACE);
         return s;
@@ -388,13 +383,12 @@ TString stringRand(size_t size) {
     }
     res.size = size;
     return res;
-    
 }
 
 TString stringInitWithCharArr(const char *s) {
     if (s == NULL) return (TString){0};
     clearError();
-    size_t len = stringLenCharArr(s); 
+    size_t len = stringLenCharArr(s);
     TString res = stringInit(len);
     if (isError()) {
         return res;
@@ -408,7 +402,7 @@ TString stringInitWithCharArr(const char *s) {
 
 TString stringInitWithInt(int64_t n) {
     clearError();
-    TString res = {0}; 
+    TString res = {0};
     int sign = 1;
     if (n == 0) return stringInitWithCharArr("0");
     if (n < 0) {
@@ -469,7 +463,7 @@ TString stringConcat(TString s1, TString s2) {
 TString stringArrConcat(const TString *s, size_t count) {
     if (s == NULL) {
         setError(ERR_NULL_POINTER);
-        return (TString) {0};
+        return (TString){0};
     }
     clearError();
     size_t totalSize = 0;
@@ -536,7 +530,7 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim) {
 TString stringArrJoin(const TString *s, size_t count, TString delim) {
     if (s == NULL) {
         setError(ERR_NULL_POINTER);
-        return (TString) {0};
+        return (TString){0};
     }
 
     clearError();
@@ -564,11 +558,10 @@ TString stringArrJoin(const TString *s, size_t count, TString delim) {
     return res;
 }
 
-
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim) {
     if (s == NULL || delim == NULL) {
         setError(ERR_NULL_POINTER);
-        return (TString) {0};
+        return (TString){0};
     }
 
     clearError();
@@ -780,8 +773,8 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
     clearError();
     while (pos != s->size) {
         int64_t substrPos = stringFindFirstCharArr(copy, oldS);
-        
-        if (substrPos < 0)  {
+
+        if (substrPos < 0) {
             for (size_t i = pos; i < s->size; ++i) {
                 stringPushBack(&res, s->data[i]);
                 if (isError()) {
@@ -807,9 +800,9 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
                 return;
             }
         }
-        pos           += oldSubstrLen + substrPos;
-        copy.data     += oldSubstrLen + substrPos;
-        copy.size     -= oldSubstrLen + substrPos;
+        pos += oldSubstrLen + substrPos;
+        copy.data += oldSubstrLen + substrPos;
+        copy.size -= oldSubstrLen + substrPos;
         copy.capacity -= oldSubstrLen + substrPos;
     }
     stringDestroy(s);
@@ -895,9 +888,66 @@ void stringRemove(TString *s, size_t pos, size_t len) {
 void stringDestroy(TString *s) {
     if (s == NULL) return;
     free(s->data);
-    *s = (TString) {0};
+    *s = (TString){0};
 }
 
+double stringToDouble(TString s) {
+    size_t number = 0;
+    size_t decimal = 0;
+    size_t p = 1;
+    bool in_decimal = false;
+    char current;
+    if (s.data[0] == '-') {
+        for (int i = 1; i < s.size; i++) {
+            current = s.data[i];
+            if (current == '1' || current == '2' || current == '3' || current == '4' ||
+                current == '5' || current == '6' || current == '7' || current == '8' ||
+                current == '9' || current == '0' || current == ',' || current == '.') {
+                if (strchr(".,", current)) {
+                    in_decimal = true;
+                } else {
+                    if (in_decimal) {
+                        if (p == 1) {
+                            decimal = (int)(current - '0');
+                        } else {
+                            decimal *= 10;
+                            decimal += (int)(current - '0');
+                        }
+                        p *= 10;
+                    } else {
+                        number *= 10;
+                        number += (int)(current - '0');
+                    }
+                }
+            }
+        }
+        return -(number + ((double)(decimal)) / p);
+    } else {
+        for (int i = 0; i < s.size; i++) {
+            current = s.data[i];
+            if (current == '1' || current == '2' || current == '3' || current == '4' ||
+                current == '5' || current == '6' || current == '7' || current == '8' ||
+                current == '9' || current == '0' || current == ',' || current == '.') {
+                if (strchr(".,", current)) {
+                    in_decimal = true;
+                } else {
+                    if (in_decimal) {
+                        if (p == 1) {
+                            decimal = (int)(current - '0');
+                        } else {
+                            decimal *= 10;
+                            decimal += (int)(current - '0');
+                        }
+                        p *= 10;
+                    } else {
+                        number *= 10;
+                        number += (int)(current - '0');
+                    }
+                }
+            }
+        }
+        return number + ((double)(decimal)) / p;
+    }
+}
 
 #endif
-
