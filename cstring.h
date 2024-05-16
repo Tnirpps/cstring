@@ -43,7 +43,6 @@ char stringCharToLower(char c);
 char stringCharToUpper(char c);
 
 int stringCharToInt(char c);
-int64_t stringCharToInt64(char c);
 
 bool stringStartWith(TString s, TString pref);
 bool stringStartWithCharArr(TString s, char *pref);
@@ -249,13 +248,10 @@ char stringCharToUpper(char c) {
 }
 
 int stringCharToInt(char c) {
-    if ('0' <= c && c <= '9') return c - '0';
+    if ('0' <= c && c <= '9') 
+        return c - '0';
+    setError(ERR_INVALID_NUMBER_REPR);
     return -1;
-}
-
-int64_t stringCharToInt64(char c) {
-    if ('0' <= c && c <= '9') return (int64_t)(c - '0');
-    return (int64_t)-1;
 }
 
 bool stringStartWith(TString s, TString pref) {
@@ -380,45 +376,30 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
 
 int64_t stringToInt(TString s) {
     int64_t sign = 1;
-    size_t len = stringLen(s);
+    int i = 0;
 
-    char* str = stringConvertToCharArr(s);
-
-    if(str[0] == '-'){
-        if(len == 1) {
+    if (s.data[0] == '-') {
+        if (s.size == 1) {
             setError(ERR_INVALID_NUMBER_REPR);
             return 0;
         }
         sign = -1;
-        str++;
+        i++;
     }
 
     int64_t val = 0;
-    while( *str != '\0' ) {
-        int64_t digit = stringCharToInt64(*str);
-        // check for non numeric characters in string
-        if(digit == -1) {
-            setError(ERR_INVALID_NUMBER_REPR);
-            return 0;
-        }
-
-        val = val * 10 + digit;
-
-        // check for integer overflow
-        if(val < 0) {
+    for (; i < s.size; i++) {
+        int64_t digit = stringCharToInt(s.data[i]);
+        
+        if (val * 10 > INT64_MAX - digit) {
             setError(ERR_NUMBER_OVERFLOW);
             return val;
         }
-
-        str++;
+        else {
+            val = val * 10 + digit;
+        }
     }
     val = val * sign;
-
-    // free(strlen) throws an exception here
-    // The reason is that the pointer is incremented each iteration
-    // And for succesful deallocation it should point to the same address
-    // of the memory that malloc returned
-    free(str - len);
 
     return val;
 }
@@ -669,23 +650,21 @@ TString stringSubstring(TString s, size_t pos, size_t len) {
 }
 
 char* stringConvertToCharArr(const TString s) {
-    if (s.data == NULL) return NULL;
+    if (s.data == NULL)
+        return NULL;
+
     clearError();
-    size_t len = stringLen(s);
-    char *res = malloc(len + 1);
+    char *res = malloc(s.size + 1);
 
     if(res == NULL) {
         setError(ERR_NULL_POINTER);
+        return NULL;
     }
 
-    if (isError()) {
-        return res;
-    }
-
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < s.size; ++i) {
         res[i] = s.data[i];
     }
-    res[len] = '\0';
+    res[s.size] = '\0';
     return res;
 }
 
