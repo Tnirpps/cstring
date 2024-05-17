@@ -892,61 +892,33 @@ void stringDestroy(TString *s) {
 }
 
 double stringToDouble(TString s) {
-    size_t number = 0;
-    size_t decimal = 0;
-    size_t p = 1;
-    bool in_decimal = false;
-    char current;
+    double number = 0;
+    double decimal = 0;
+    bool negative = false;
+    int i = 0;
     if (s.data[0] == '-') {
-        for (int i = 1; i < s.size; i++) {
-            current = s.data[i];
-            if (current == '1' || current == '2' || current == '3' || current == '4' ||
-                current == '5' || current == '6' || current == '7' || current == '8' ||
-                current == '9' || current == '0' || current == ',' || current == '.') {
-                if (strchr(".,", current)) {
-                    in_decimal = true;
-                } else {
-                    if (in_decimal) {
-                        if (p == 1) {
-                            decimal = (int)(current - '0');
-                        } else {
-                            decimal *= 10;
-                            decimal += (int)(current - '0');
-                        }
-                        p *= 10;
-                    } else {
-                        number *= 10;
-                        number += (int)(current - '0');
-                    }
-                }
+        negative = true;
+        i = 1;
+    }
+    for (i; i < s.size && s.data[i] != '.'; i++) {
+        if ('0' < s.data[i] && s.data[i] < '9') {
+            number *= 10;
+            number += (double)(s.data[i] - '0');
+        }
+    }
+    if (s.data[i] == '.') {
+        i = s.size - 1;
+        for (i; s.data[i] != '.'; i--) {
+            if ('0' < s.data[i] && s.data[i] < '9') {
+                decimal += (double)(s.data[i] - '0');
+                decimal /= 10;
             }
         }
-        return -(number + ((double)(decimal)) / p);
+    }
+    if (negative == false) {
+        return number + decimal;
     } else {
-        for (int i = 0; i < s.size; i++) {
-            current = s.data[i];
-            if (current == '1' || current == '2' || current == '3' || current == '4' ||
-                current == '5' || current == '6' || current == '7' || current == '8' ||
-                current == '9' || current == '0' || current == ',' || current == '.') {
-                if (strchr(".,", current)) {
-                    in_decimal = true;
-                } else {
-                    if (in_decimal) {
-                        if (p == 1) {
-                            decimal = (int)(current - '0');
-                        } else {
-                            decimal *= 10;
-                            decimal += (int)(current - '0');
-                        }
-                        p *= 10;
-                    } else {
-                        number *= 10;
-                        number += (int)(current - '0');
-                    }
-                }
-            }
-        }
-        return number + ((double)(decimal)) / p;
+        return -(number + decimal);
     }
 }
 

@@ -504,6 +504,7 @@ int main() {
     test_stringCompare();
     test_stringToLower();
     test_stringToUpper();
+    test_stringToDouble();
     test_stringMap();
     test_stringContains();
     test_stringFilter();
