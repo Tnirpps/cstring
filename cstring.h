@@ -391,7 +391,7 @@ int64_t stringToInt(TString s) {
     for (; i < s.size; i++) {
         int64_t digit = stringCharToInt(s.data[i]);
         
-        if (val * 10 > INT64_MAX - digit) {
+        if (val > (INT64_MAX - digit) / 10) {
             setError(ERR_NUMBER_OVERFLOW);
             return val;
         }
