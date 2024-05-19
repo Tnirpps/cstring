@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <inttypes.h>
 
 typedef enum EErrorCode {
     ERR_NO_ERROR,
@@ -80,7 +81,7 @@ void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
 
-
+void stringRemoveChar(TString *s, char c);
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
 void stringPushFront(TString *s, char c);
@@ -652,6 +653,17 @@ void stringDebug(TString s) {
     }
 }
 
+void stringRemoveChar(TString *s, char c) {
+    size_t newSize = 0;
+    for (size_t i = 0; i < s->size; ++i) {
+        if (s->data[i] != c) {
+            s->data[newSize] = s->data[i];
+            ++newSize;
+        }
+    }
+    s->size = newSize;
+}
+
 void stringSwap(TString *s1, TString *s2) {
     if (s1 == NULL || s2 == NULL) {
         setError(ERR_NULL_POINTER);
@@ -900,4 +912,3 @@ void stringDestroy(TString *s) {
 
 
 #endif
-
