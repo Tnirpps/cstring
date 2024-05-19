@@ -662,7 +662,6 @@ void stringRemoveChar(TString *s, char c) {
         }
     }
     s->size = newSize;
-    s->data[s->size] = '\0'; 
 }
 
 void stringSwap(TString *s1, TString *s2) {
