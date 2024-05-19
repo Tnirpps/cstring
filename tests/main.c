@@ -372,6 +372,22 @@ void test_stringContains() {
     printGreen("test_stringContains\n");
 }
 
+void test_stringToDouble() {
+    TString s1 = stringInitWithCharArr("3.14159");
+    TString s2 = stringInitWithCharArr("123");
+    TString s3 = stringInitWithCharArr("-100");
+
+    assertEq(stringToDouble(s1), 3.14159);
+    assertEq(stringToDouble(s2), 123);
+    assertEq(stringToDouble(s3), -100);
+
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+    stringDestroy(&s3);
+
+    printGreen("test_stringToDouble\n");
+}
+
 bool acceptAll(char c) {
     return true;
 }
