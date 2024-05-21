@@ -471,6 +471,40 @@ void test_stringRemove() {
     printGreen("test_stringRemove\n");
 }
 
+void test_stringCapitalize() {
+    TString simpleTString = stringInitWithCharArr("hello World! testing capitalize");
+    TString spaceThenDigitsTString = stringInitWithCharArr(" 123hello world! ");
+    TString specialSignThenDigitsTestString = stringInitWithCharArr("!123hello world! 0testing capitalize");
+
+    TString expectedSimpleTString = stringInitWithCharArr("Hello World! Testing Capitalize");
+    TString expectedSpaceThenDigitsTString = stringInitWithCharArr(" 123hello World! ");
+    TString expectedSpecialSignThenDigitsString = stringInitWithCharArr("!123hello World! 0testing Capitalize");
+
+    stringCapitalize(&simpleTString);
+    stringCapitalize(&spaceThenDigitsTString);
+    stringCapitalize(&specialSignThenDigitsTestString);
+
+    assertEq(stringLen(simpleTString), stringLen(expectedSimpleTString));
+    assertEq(strncmp(simpleTString.data, expectedSimpleTString.data, simpleTString.size), 0);
+
+    assertEq(stringLen(spaceThenDigitsTString), stringLen(expectedSpaceThenDigitsTString));
+    assertEq(strncmp(
+            spaceThenDigitsTString.data,
+            expectedSpaceThenDigitsTString.data,
+            spaceThenDigitsTString.size),
+             0);
+
+    assertEq(stringLen(specialSignThenDigitsTestString), stringLen(expectedSpecialSignThenDigitsString));
+    assertEq(strncmp(
+            specialSignThenDigitsTestString.data,
+            expectedSpecialSignThenDigitsString.data,
+            specialSignThenDigitsTestString.size),
+             0);
+
+    printGreen("test_stringCapitalize");
+}
+
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -498,6 +532,7 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringCapitalize();
     return 0;
 }
 
