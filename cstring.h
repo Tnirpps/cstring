@@ -16,6 +16,7 @@ typedef enum EErrorCode {
     ERR_INVALID_STATE,
     ERR_NULL_POINTER,
     ERR_NUMBER_OVERFLOW,
+    ERR_NAN
 } EErrorCode;
 
 #define MAX_ERROR_MSG_LEN 300
@@ -901,25 +902,30 @@ double stringToDouble(TString s) {
         i = 1;
     }
     for (i; i < s.size && s.data[i] != '.'; i++) {
-        if ('0' < s.data[i] && s.data[i] < '9') {
+        if ('0' <= s.data[i] && s.data[i] <= '9') {
             number *= 10;
             number += (double)(s.data[i] - '0');
+        } else {
+            setError(ERR_NAN);
+            return;
         }
     }
     if (s.data[i] == '.') {
         i = s.size - 1;
         for (i; s.data[i] != '.'; i--) {
-            if ('0' < s.data[i] && s.data[i] < '9') {
+            if ('0' <= s.data[i] && s.data[i] <= '9') {
                 decimal += (double)(s.data[i] - '0');
                 decimal /= 10;
+            } else {
+                setError(ERR_NAN);
+                return;
             }
         }
     }
-    if (negative == false) {
-        return number + decimal;
-    } else {
+    if (negative == true) {
         return -(number + decimal);
     }
+    return number + decimal;
 }
 
 #endif
