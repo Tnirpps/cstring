@@ -102,6 +102,8 @@ void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
 
+void stringCapitalize(TString *s); 
+
 #endif
 
 // for testing:
@@ -908,6 +910,48 @@ void stringDestroy(TString *s) {
     if (s == NULL) return;
     free(s->data);
     *s = (TString) {0};
+}
+
+bool charIsSep(char cur_ch){
+    char sep[5] = {' ', '\t', '\n', ',', '.'};
+    for (int i=0; i<5; i++){
+        if (cur_ch == sep[i]) return true;
+    }
+    return false;
+}
+
+void stringCapitalize(TString *s){
+    typedef enum Tstate{
+        start,
+        end
+    } Tstate;
+    Tstate state = start;
+    size_t len = s->size;
+    for(size_t idx=0; idx<len; idx++){
+        char symb = s->data[idx];
+        switch(state){
+            case start:
+                if ( charIsSep(symb) ){
+                    state = start;
+                }
+                else{
+                    if ( stringCharIsAlpha(symb)){
+                        stringCharToUpper(symb);
+                        state = end;
+                    } else state = end;
+                }
+                break;
+            case end:
+                if (charIsSep(symb)){
+                    state = start;
+                } else state = end;
+                break;
+            
+            default:
+                state = end;
+                break;
+        }
+    }
 }
 
 
