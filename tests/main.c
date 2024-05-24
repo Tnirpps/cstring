@@ -471,6 +471,27 @@ void test_stringRemove() {
     printGreen("test_stringRemove\n");
 }
 
+void test_stringCapitalize(){
+    TString s1 = stringInitWithCharArr("Hello, World! testing remove");
+    TString res1 = stringInitWithCharArr("Hello, World! Testing Remove");
+    stringCapitalize(&s1);
+    assertEq(stringCompare(s1, res1), 0);
+    TString s2 = stringInitWithCharArr("1ello, World! testing remove");
+    TString res2 = stringInitWithCharArr("1ello, World! Testing Remove");
+    stringCapitalize(&s2);
+    assertEq(stringCompare(s2, res2), 0);
+    TString s3 = stringInitWithCharArr("Hello, World! tes&ting remove");
+    TString res3= stringInitWithCharArr("Hello, World! Tes&ting Remove");
+    stringCapitalize(&s3);
+    assertEq(stringCompare(s3, res3), 0);
+    TString s4 = stringInitWithCharArr("Hello, World!,testing remove");
+    TString res4 = stringInitWithCharArr("Hello, World!,Testing Remove");
+    stringCapitalize(&s4);
+    assertEq(stringCompare(s4, res4), 0);
+    
+    printGreen("test_stringCapitalize\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -498,6 +519,7 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringCapitalize();
     return 0;
 }
 
