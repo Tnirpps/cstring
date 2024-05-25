@@ -907,7 +907,7 @@ double stringToDouble(TString s) {
             number += (double)(s.data[i] - '0');
         } else {
             setError(ERR_NAN);
-            return;
+            return 0;
         }
     }
     if (s.data[i] == '.') {
@@ -918,7 +918,7 @@ double stringToDouble(TString s) {
                 decimal /= 10;
             } else {
                 setError(ERR_NAN);
-                return;
+                return 0;
             }
         }
     }
