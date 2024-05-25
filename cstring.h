@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <inttypes.h>
+#include <stdarg.h>
 
 typedef enum EErrorCode {
     ERR_NO_ERROR,
@@ -607,6 +608,34 @@ TString stringSubstring(TString s, size_t pos, size_t len) {
     }
     res.size = len;
     return res;
+}
+
+TString stringFormat(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    va_list args_copy;
+    va_copy(args_copy, args);
+    const int size = vsnprintf(NULL, 0, format, args_copy);
+    va_end(args_copy);
+    if (size < 0) {
+	    const TString error_result = { NULL, 0, 0 };
+        va_end(args);
+        return error_result;
+    }
+    TString result;
+    result.size = size;
+    result.capacity = size + 1;
+    result.data = (char*)malloc(result.capacity);
+
+    if (!result.data) {
+        result.size = 0;
+        result.capacity = 0;
+        va_end(args);
+        return result;
+    }
+    vsnprintf(result.data, result.capacity, format, args);
+    va_end(args);
+    return result;
 }
 
 void stringScan(TString *s) {
