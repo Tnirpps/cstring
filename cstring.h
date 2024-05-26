@@ -38,6 +38,13 @@ typedef struct TString {
     size_t capacity;
 } TString;
 
+typedef struct TStrVec {
+    TString *data;
+    size_t size;
+    size_t capacity;
+} TStrVec;
+
+
 bool stringCharIsDigit(char c);
 bool stringCharIsAlpha(char c);
 bool stringCharIsAlphanum(char c);
