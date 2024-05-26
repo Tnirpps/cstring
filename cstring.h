@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 typedef enum EErrorCode {
     ERR_NO_ERROR,
     ERR_ALLOCATE_SPACE,
@@ -79,6 +80,7 @@ void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
 
+void stringRemoveChar(TString *s, char c);
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
 void stringPushFront(TString *s, char c);
@@ -644,6 +646,17 @@ void stringDebug(TString s) {
         stringPrint(s);
         printf(", size = %zu, cap = %zu]\n", s.size, s.capacity);
     }
+}
+
+void stringRemoveChar(TString *s, char c) {
+    size_t newSize = 0;
+    for (size_t i = 0; i < s->size; ++i) {
+        if (s->data[i] != c) {
+            s->data[newSize] = s->data[i];
+            ++newSize;
+        }
+    }
+    s->size = newSize;
 }
 
 void stringSwap(TString *s1, TString *s2) {
