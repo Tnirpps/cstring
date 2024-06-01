@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 
 typedef enum EErrorCode {
@@ -75,6 +77,7 @@ TString stringJoin(TString s1, TString s2, TString delim);
 TString stringJoinCharArr(TString s1, TString s2, const char *delim);
 TString stringArrJoin(const TString *s, size_t count, TString delim);
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim);
+TString stringInitWithCharArr(const char *str);
 
 void stringScan(TString *s);
 void stringPrint(TString s);
@@ -100,6 +103,9 @@ void stringMap(TString *s, char (*func)(char));
 void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
+void stringPrint(const TString s);
+void stringCapitalize(TString *s);
+
 
 double stringToDouble(TString s);
 
@@ -941,4 +947,46 @@ double stringToDouble(TString s) {
     return number + decimal;
 }
 
-#endif
+TString stringInitWithCharArr(const char *str) {
+    TString s;
+    s.length = strlen(str);
+    s.capacity = s.length + 1;
+    s.data = (char *)malloc(s.capacity * sizeof(char));
+    if (s.data != NULL) {
+        strcpy(s.data, str);
+    }
+    return s;
+}
+
+void stringDestroy(TString *s) {
+    if (s->data != NULL) {
+        free(s->data);
+        s->data = NULL;
+    }
+    s->length = 0;
+    s->capacity = 0;
+}
+
+void stringPrint(const TString s) {
+    if (s.data != NULL) {
+        printf("%s\n", s.data);
+    }
+}
+
+void stringCapitalize(TString *s) {
+    if (s->data == NULL) {
+        return;
+    }
+
+    int capitalizeNext = 1;
+    for (size_t i = 0; i < s->length; i++) {
+        if (isspace(s->data[i])) {
+            capitalizeNext = 1;
+        } else if (capitalizeNext && isalpha(s->data[i])) {
+            s->data[i] = toupper(s->data[i]);
+            capitalizeNext = 0;
+        } else {
+            s->data[i] = tolower(s->data[i]);
+        }
+    }
+}
