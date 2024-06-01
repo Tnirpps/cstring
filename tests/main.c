@@ -483,6 +483,18 @@ void test_stringToDouble() {
     printGreen("stringToDouble\n");
 }
 
+void test_stringCountSubstring() {
+    TString s1 = stringInitWithCharArr("abc1234dgdgdsfsfdfdsfsfsd1234sfdjg");
+    TString s2 = stringInitWithCharArr("123");
+
+    size_t result = 2;
+    assertEq(stringCountSubstring(s1, s2), result);
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+
+    printGreen("stringCountSubstring\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -511,5 +523,6 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringCountSubstring();
     return 0;
 }
