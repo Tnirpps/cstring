@@ -61,6 +61,7 @@ int stringCompare(TString s1, TString s2);
 
 int64_t stringFindFirst(TString s, TString pattern);
 int64_t stringFindFirstCharArr(TString s, const char *pattern);
+int64_t stringLevenstheinDistance(TString s1, TString s2);
 
 TString stringRand(size_t size);
 TString stringInit(size_t capacity);
