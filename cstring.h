@@ -941,4 +941,36 @@ double stringToDouble(TString s) {
     return number + decimal;
 }
 
+void stringInsert(TString *s, size_t pos, TString toInsert) {
+    size_t len_sub = stringLen(toInsert);
+    size_t len_str = stringLen(*s);
+
+    if (pos > len_str) {
+        setError(ERR_NAN);
+    }
+
+    char* new_data = malloc(len_str + len_sub + 1);
+    if(!new_data){
+        setError(ERR_ALLOCATE_SPACE);
+    }
+
+    clearError();
+
+    for(size_t i = 0; i < pos; i++){
+        new_data[i] = s->data[i];
+    }
+
+    for(size_t i = 0; i < len_sub; i++){
+        new_data[i + pos] = toInsert.data[i];
+    }
+
+    for (size_t i = pos; i < len_str; i++){
+        new_data[i + len_sub] = s->data[i];
+    }
+
+    free(s->data);
+    s->data = new_data;
+    s->size = len_str + len_sub;
+}
+
 #endif
