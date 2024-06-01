@@ -100,6 +100,7 @@ void stringMap(TString *s, char (*func)(char));
 void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
+void stringCapitalize(TString *s);
 
 double stringToDouble(TString s);
 
