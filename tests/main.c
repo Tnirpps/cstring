@@ -18,24 +18,6 @@
         assert((X) != (Y));                               \
     }
 
-bool isSeparator(char symbol) {
-    return symbol == ' ' || symbol == '\t' || symbol == '\n' || symbol == ',' || symbol == '.';
-}
-
-void stringCapitalize(TString *s) {
-    if (s == NULL || s->size == 0) {
-        return;
-    }
-    if ('a' <= s->data[0] && s->data[0] <= 'z') {
-        s->data[0] = stringCharToUpper(s->data[0]);
-    }
-    for (size_t i = 1; i < s->size; ++i) {
-        if (isSeparator(s->data[i - 1]) && 'a' <= s->data[i] && s->data[i] <= 'z') {
-            s->data[i] = stringCharToUpper(s->data[i]);
-        }
-    }
-}
-
 
 void printGreen(const char *text) {
     printf("\033[32m[ok]\033[0m %s", text);
