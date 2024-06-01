@@ -941,4 +941,23 @@ double stringToDouble(TString s) {
     return number + decimal;
 }
 
+size_t stringCountSubstring(TString s, TString pattern) {
+    size_t count = 0;
+    TString tmp = stringInitWithCharArr(s.data);
+    size_t pattern_length = pattern.size;
+    size_t shift = 0;
+
+    if (pattern_length == 0) {
+        return 0;
+    }
+
+    while (stringContains(tmp, pattern)) {
+        shift = stringFindFirst(tmp, pattern) + pattern_length;
+        count++;
+        tmp.data += shift;
+        tmp.size -= shift;
+    }
+    return count;
+}
+
 #endif
