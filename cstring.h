@@ -248,6 +248,7 @@ char stringCharToUpper(char c) {
 }
 
 int stringCharToInt(char c) {
+    clearError();
     if ('0' <= c && c <= '9') 
         return c - '0';
     setError(ERR_INVALID_NUMBER_REPR);
@@ -375,6 +376,8 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
 }
 
 int64_t stringToInt(TString s) {
+    clearError();
+
     int64_t sign = 1;
     int i = 0;
 
@@ -390,8 +393,9 @@ int64_t stringToInt(TString s) {
     int64_t val = 0;
     for (; i < s.size; i++) {
         int64_t digit = stringCharToInt(s.data[i]);
-        
-        if (val > (INT64_MAX - digit) / 10) {
+
+        // TODO: check for INT64_MIN overflow
+        if (val >= (INT64_MAX - digit) / 10) {
             setError(ERR_NUMBER_OVERFLOW);
             return val;
         }
