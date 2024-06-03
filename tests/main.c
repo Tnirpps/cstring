@@ -483,6 +483,18 @@ void test_stringToDouble() {
     printGreen("stringToDouble\n");
 }
 
+void test_stringInsert(){
+    TString s1 = stringInitWithCharArr("abcdef");
+    TString s2 = stringInitWithCharArr("123");
+    stringInsert(&s1, 2, s2);
+    
+    TString s1expected = stringInitWithCharArr("ab123cdef");
+    
+    assertEq(strncmp(s1.data, s1expected.data, stringLen(s1expected)), 0);
+
+    printGreen("stringInsert\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -511,5 +523,6 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringInsert();
     return 0;
 }
