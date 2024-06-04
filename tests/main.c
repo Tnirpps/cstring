@@ -1,23 +1,22 @@
 #include <assert.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 
 #define CSTRING_IMPLEMENTATION
 #include "../cstring.h"
 
+#define assertEq(X, Y)                                    \
+    while ((X) != (Y)) {                                  \
+        printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
+        assert((X) == (Y));                               \
+    }
 
-#define assertEq(X, Y)                                \
-    while((X) != (Y)){                                \
-    printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
-    assert((X) == (Y));                               \
-}
-
-#define assertNotEq(X, Y)                             \
-    while((X) == (Y)){                                \
-    printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
-    assert((X) != (Y));                               \
-}
-
+#define assertNotEq(X, Y)                                 \
+    while ((X) == (Y)) {                                  \
+        printf("%zu vs %zu\n", (size_t)(X), (size_t)(Y)); \
+        assert((X) != (Y));                               \
+    }
 
 void printGreen(const char *text) {
     printf("\033[32m[ok]\033[0m %s", text);
@@ -29,7 +28,7 @@ void printRed(const char *text) {
 
 void test_stringStartWith() {
     TString str = stringInitWithCharArr("Hello, World!");
-    
+
     TString prefix = stringInitWithCharArr("Hello");
     assertEq(stringStartWith(str, prefix), true);
 
@@ -56,7 +55,7 @@ void test_stringStartWithCharArr() {
 
 void test_stringEndWith() {
     TString str = stringInitWithCharArr("Hello, World!");
-    
+
     TString suffix = stringInitWithCharArr("World!");
     assertEq(stringEndWith(str, suffix), true);
 
@@ -157,14 +156,13 @@ void test_stringInitWithInt() {
     printGreen("test_stringInitWithInt\n");
 }
 
-
 void test_stringCopy() {
     TString original = stringInitWithCharArr("Test string for copy");
     TString copied = stringCopy(original);
 
     assertEq(stringLen(copied), stringLen(original));
     assertEq(strncmp(copied.data, original.data, copied.size), 0);
-    assertEq(copied.data, original.data); // Ensure it's a shallow copy
+    assertEq(copied.data, original.data);  // Ensure it's a shallow copy
 
     stringDestroy(&original);
 
@@ -177,7 +175,7 @@ void test_stringDeepCopy() {
 
     assertEq(stringLen(deepCopy), stringLen(original));
     assertEq(strncmp(deepCopy.data, original.data, deepCopy.size), 0);
-    assertNotEq(deepCopy.data, original.data); // Ensure it's a deep copy
+    assertNotEq(deepCopy.data, original.data);  // Ensure it's a deep copy
 
     stringDestroy(&original);
     stringDestroy(&deepCopy);
@@ -250,7 +248,7 @@ void test_stringPushBack() {
 
     assertEq(stringLen(str), 6);
     assertEq(str.data[stringLen(str) - 1], c);
-    
+
     stringDestroy(&str);
     printGreen("test_stringPushBack passed\n");
 }
@@ -261,7 +259,7 @@ void test_stringTrim() {
 
     assertEq(stringLen(str), 5);
     assertEq(strncmp(str.data, "hello", stringLen(str)), 0);
-    
+
     stringPushBack(&str, '\n');
     for (size_t i = 0; i < 100; ++i) {
         stringPushBack(&str, ' ');
@@ -271,7 +269,6 @@ void test_stringTrim() {
     assertEq(stringLen(str), 5);
     assertEq(strncmp(str.data, "hello", stringLen(str)), 0);
 
-    
     stringDestroy(&str);
     printGreen("test_stringTrim\n");
 }
@@ -317,7 +314,7 @@ void test_stringCompare() {
 }
 
 void test_stringToUpper() {
-    TString s   = stringInitWithCharArr("Hello World! 123\n");
+    TString s = stringInitWithCharArr("Hello World! 123\n");
     TString res = stringInitWithCharArr("HELLO WORLD! 123\n");
     stringToUpper(&s);
     assertEq(stringCompare(s, res), 0);
@@ -325,11 +322,10 @@ void test_stringToUpper() {
     stringDestroy(&s);
     stringDestroy(&res);
     printGreen("test_stringToUpper\n");
-
 }
 
 void test_stringToLower() {
-    TString s   = stringInitWithCharArr("Hello World! 123\n");
+    TString s = stringInitWithCharArr("Hello World! 123\n");
     TString res = stringInitWithCharArr("hello world! 123\n");
     stringToLower(&s);
     assertEq(stringCompare(s, res), 0);
@@ -340,14 +336,14 @@ void test_stringToLower() {
 }
 
 char func(char c) {
-    if ('0' <= c  && c <= '9') {
+    if ('0' <= c && c <= '9') {
         return '*';
     }
     return c;
 }
 
 void test_stringMap() {
-    TString s   = stringInitWithCharArr("He22o Wor1d! 123\n");
+    TString s = stringInitWithCharArr("He22o Wor1d! 123\n");
     TString res = stringInitWithCharArr("He**o Wor*d! ***\n");
     stringMap(&s, func);
     assertEq(stringCompare(s, res), 0);
@@ -358,10 +354,10 @@ void test_stringMap() {
 }
 
 void test_stringContains() {
-    TString s   = stringInitWithCharArr("hi good looo shiii po ns skj skdjl hello wgg\n");
+    TString s = stringInitWithCharArr("hi good looo shiii po ns skj skdjl hello wgg\n");
     TString p1 = stringInitWithCharArr("hello");
     TString p2 = stringInitWithCharArr("hello1");
-    
+
     assertEq(stringContains(s, p1), true);
     assertEq(stringContains(s, p2), false);
 
@@ -437,7 +433,7 @@ void test_stringPad() {
 
     assertEq(stringLen(str), 20);
     assertEq(strncmp(str.data, "       Hello, World!", stringLen(str)), 0);
-    
+
     stringPadLeft(&str, 10, ' ');
     assertEq(stringLen(str), 20);
     assertEq(strncmp(str.data, "       Hello, World!", stringLen(str)), 0);
@@ -448,18 +444,18 @@ void test_stringPad() {
 
     assertEq(stringLen(str), 20);
     assertEq(strncmp(str.data, "Hello, World!       ", stringLen(str)), 0);
-    
+
     stringPadRight(&str, 10, ' ');
     assertEq(stringLen(str), 20);
     assertEq(strncmp(str.data, "Hello, World!       ", stringLen(str)), 0);
-    
+
     stringDestroy(&str);
     printGreen("test_stringPad\n");
 }
 
 void test_stringRemove() {
     TString s = stringInitWithCharArr("Hello, World! testing remove");
-    
+
     stringRemove(&s, stringFindFirstCharArr(s, "test"), 8);
     assertEq(strncmp(s.data, "Hello, World! remove", stringLen(s)), 0);
 
@@ -472,19 +468,35 @@ void test_stringRemove() {
 }
 
 void test_stringToInt() {
-    TString s1   = stringInitWithCharArr("0");
+    TString s1 = stringInitWithCharArr("0");
     TString s2 = stringInitWithCharArr("-2132456");
-    TString s3 = stringInitWithCharArr("54377345");
+    TString s3 = stringInitWithCharArr("18446744073709551615");
     
     assertEq(stringToInt(s1), 0);
     assertEq(stringToInt(s2), -2132456);
-    assertEq(stringToInt(s3), 54377345);
+    assertEq(stringToInt(s3), 18446744073709551615LL);
+  
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+    stringDestroy(&s3);
+  
+    printGreen("test_stringToInt\n");
+}
+
+void test_stringToDouble() {
+    TString s1 = stringInitWithCharArr("0");
+    TString s2 = stringInitWithCharArr("12.34");
+    TString s3 = stringInitWithCharArr("-12.34");
+
+    assertEq(stringToDouble(s1), 0);
+    assertEq(stringToDouble(s2), 12.34);
+    assertEq(stringToDouble(s3), -12.34);
 
     stringDestroy(&s1);
     stringDestroy(&s2);
     stringDestroy(&s3);
 
-    printGreen("test_stringToInt\n");
+    printGreen("stringToDouble\n");
 }
 
 int main() {
@@ -506,8 +518,9 @@ int main() {
     test_stringReplaceAll();
     test_stringReverse();
     test_stringCompare();
-    test_stringToLower(); 
-    test_stringToUpper(); 
+    test_stringToLower();
+    test_stringToUpper();
+    test_stringToDouble();
     test_stringMap();
     test_stringContains();
     test_stringFilter();
@@ -517,5 +530,3 @@ int main() {
     test_stringToInt();
     return 0;
 }
-
-
