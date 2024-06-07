@@ -364,7 +364,9 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
 }
 
 int64_t stringLevenshteinDistance(TString s1, TString s2) {
-    int64_t d[s1.size + 1][s2.size + 1] = {0};
+    int64_t d[s1.size + 1][s2.size + 1];
+
+    d[0][0] = 0;
 
     for (size_t j = 1; j <= s2.size; j++) {
         d[0][j] = d[0][j - 1] + 1;
@@ -374,7 +376,7 @@ int64_t stringLevenshteinDistance(TString s1, TString s2) {
         d[i][0] = d[i - 1][0] + 1;
 
         for (size_t j = 1; j <= s2.size; j++) {
-            if (s1[i - 1] == s2[j - 1]) {
+            if (s1.data[i - 1] == s2.data[j - 1]) {
                 d[i][j] = d[i - 1][j - 1];
             } else {
                 d[i][j] = MIN(d[i - 1][j] + 1, MIN(d[i][j - 1] + 1, d[i - 1][j - 1] + 1));
