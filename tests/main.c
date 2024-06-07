@@ -483,6 +483,22 @@ void test_stringToDouble() {
     printGreen("stringToDouble\n");
 }
 
+void test_stringLevenshteinDistance() {
+    TString s1 = stringInitWithCharArr("");
+    TString s2 = stringInitWithCharArr("POLYNOMIAL");
+    TString s3 = stringInitWithCharArr("EXPONENTIAL");
+
+    assertEq(stringLevenshteinDistance(s1, s2), 10);
+    assertEq(stringLevenshteinDistance(s2, s1), 10);
+    assertEq(stringLevenshteinDistance(s2, s3), 6);
+
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+    stringDestroy(&s3);
+
+    printGreen("test_stringLevenshteinDistance\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -511,5 +527,6 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringLevenshteinDistance();
     return 0;
 }

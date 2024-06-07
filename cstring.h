@@ -21,6 +21,7 @@ typedef enum EErrorCode {
 } EErrorCode;
 
 #define MAX_ERROR_MSG_LEN 300
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 static EErrorCode ERROR_CODE = ERR_NO_ERROR;
 static char ERROR_BUF[MAX_ERROR_MSG_LEN] = {0};
 
@@ -61,6 +62,7 @@ int stringCompare(TString s1, TString s2);
 
 int64_t stringFindFirst(TString s, TString pattern);
 int64_t stringFindFirstCharArr(TString s, const char *pattern);
+int64_t stringLevenshteinDistance(TString s1, TString s2);
 
 TString stringRand(size_t size);
 TString stringInit(size_t capacity);
@@ -359,6 +361,28 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
         if (match == patternLen) return i;
     }
     return -1;
+}
+
+int64_t stringLevenshteinDistance(TString s1, TString s2) {
+    int64_t d[s1.size + 1][s2.size + 1] = {0};
+
+    for (size_t j = 1; j <= s2.size; j++) {
+        d[0][j] = d[0][j - 1] + 1;
+    }
+
+    for (size_t i = 1; i <= s1.size; i++) {
+        d[i][0] = d[i - 1][0] + 1;
+
+        for (size_t j = 1; j <= s2.size; j++) {
+            if (s1[i - 1] == s2[j - 1]) {
+                d[i][j] = d[i - 1][j - 1];
+            } else {
+                d[i][j] = MIN(d[i - 1][j] + 1, MIN(d[i][j - 1] + 1, d[i - 1][j - 1] + 1));
+            }
+        }
+    }
+
+    return d[s1.size][s2.size];
 }
 
 TString stringInit(size_t capacity) {
