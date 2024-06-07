@@ -54,9 +54,9 @@ char stringCharToUpper(char c);
 int stringCharToInt(char c);
 
 bool stringStartWith(TString s, TString pref);
-bool stringStartWithCharArr(TString s, char *pref);
+bool stringStartWithCharArr(TString s, const char *pref);
 bool stringEndWith(TString s, TString pref);
-bool stringEndWithCharArr(TString s, char *pref);
+bool stringEndWithCharArr(TString s, const char *pref);
 bool stringIsEqual(TString s1, TString s2);
 bool stringIsEqualIgnoreCase(TString s1, TString s2);
 bool stringIsEmpty(TString s);
@@ -270,7 +270,7 @@ bool stringStartWith(TString s, TString pref) {
                             0, pref.size, true /* caseSensative */) == 0;
 }
 
-bool stringStartWithCharArr(TString s, char *pref) {
+bool stringStartWithCharArr(TString s, const char *pref) {
     if (pref == NULL) return true;
     size_t len = stringLenCharArr(pref);
     if (s.size < len) return false;
@@ -284,7 +284,7 @@ bool stringEndWith(TString s, TString pref) {
                pref.data, 0, pref.size, true /* caseSensative */) == 0;
 }
 
-bool stringEndWithCharArr(TString s, char *pref) {
+bool stringEndWithCharArr(TString s, const char *pref) {
     if (pref == NULL) return true;
     size_t len = stringLenCharArr(pref);
     if (s.size < len) return false;
@@ -354,9 +354,8 @@ int stringCompare(TString s1, TString s2) {
 }
 
 int64_t stringFindFirst(TString s, TString pattern) {
-    int64_t res = 0;
     for (size_t i = 0; i < s.size; ++i) {
-        int64_t match = 0;
+        size_t match = 0;
         for (size_t j = 0; i + j < s.size && j < pattern.size; ++j) {
             if (s.data[i + j] != pattern.data[j]) break;
             ++match;
@@ -371,7 +370,6 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
         setError(ERR_NULL_POINTER);
         return -1;
     }
-    int64_t res = 0;
     size_t patternLen = stringLenCharArr(pattern);
     for (size_t i = 0; i < s.size; ++i) {
         int64_t match = 0;
@@ -874,7 +872,7 @@ void stringReplaceAll(TString *s, const char *oldS, const char *newS) {
             break;
         }
 
-        for (size_t i = 0; i < substrPos; ++i) {
+        for (int64_t i = 0; i < substrPos; ++i) {
             stringPushBack(&res, copy.data[i]);
             if (isError()) {
                 stringDestroy(&res);
@@ -1007,8 +1005,8 @@ double stringToDouble(TString s) {
         negative = true;
         i = 1;
     }
-    for (i; i < s.size && s.data[i] != '.'; i++) {
-        if ('0' <= s.data[i] && s.data[i] <= '9') {
+    for (; i < s.size && s.data[i] != '.'; ++i) {
+        if (stringCharIsDigit(s.data[i])) {
             number *= 10;
             number += (double)(s.data[i] - '0');
         } else {
@@ -1016,10 +1014,10 @@ double stringToDouble(TString s) {
             return 0;
         }
     }
-    if (s.data[i] == '.') {
+    if (i < s.size && s.data[i] == '.') {
         i = s.size - 1;
-        for (i; s.data[i] != '.'; i--) {
-            if ('0' <= s.data[i] && s.data[i] <= '9') {
+        for (; s.data[i] != '.'; --i) {
+            if (stringCharIsDigit(s.data[i])) {
                 decimal += (double)(s.data[i] - '0');
                 decimal /= 10;
             } else {

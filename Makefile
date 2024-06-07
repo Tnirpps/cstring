@@ -2,7 +2,7 @@ BIN_DIR = .bin
 TEST_BINARY = $(BIN_DIR)/tests
 TEST_FILE = tests/main.c
 CC = gcc
-
+CFLAGS = -fsanitize=address -fsanitize=undefined -g -Wall -Wextra
 all: run_tests
 
 $(TEST_BINARY): $(TEST_FILE)
