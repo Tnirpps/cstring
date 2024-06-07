@@ -484,6 +484,28 @@ void test_stringToDouble() {
     printGreen("stringToDouble\n");
 }
 
+void test_stringCapitalize(){
+    TString num1 = stringInitWithCharArr("Hello, World! that is my test");
+    TString answer1 = stringInitWithCharArr("Hello, World! That Is My Test");
+    TString num2 = stringInitWithCharArr("1ello, World! that is my test");
+    TString answer2 = stringInitWithCharArr("1ello, World! That Is My Test");
+    TString num3 = stringInitWithCharArr("Hello, World! tha%t is my test");
+    TString answer3= stringInitWithCharArr("Hello, World! Tha%t Is My Test");
+    TString num4 = stringInitWithCharArr("Hello, World!.that is my test");
+    TString answer4 = stringInitWithCharArr("Hello, World!.That Is My Test");
+    
+    stringCapitalize(&num1);
+    assertEq(stringCompare(num1, answer1), 0);
+    stringCapitalize(&num2);
+    assertEq(stringCompare(num2, answer2), 0);
+    stringCapitalize(&num3);
+    assertEq(stringCompare(num3, answer3), 0);
+    stringCapitalize(&num4);
+    assertEq(stringCompare(num4, answer4), 0);
+
+    printGreen("test_stringCapitalize\n");
+}
+
 int main() {
     test_stringStartWith();
     test_stringEndWith();
@@ -512,5 +534,6 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+    test_stringCapitalize();
     return 0;
 }
