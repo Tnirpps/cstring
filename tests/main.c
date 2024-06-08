@@ -542,6 +542,6 @@ int main() {
     test_stringPad();
     test_stringRemove();
 //    test_stringToInt();
-    test_stringCapitalize();
+    test_stringCapitalize(); // new
     return 0;
 }
