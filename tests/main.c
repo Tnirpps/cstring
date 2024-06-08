@@ -467,6 +467,23 @@ void test_stringRemove() {
     printGreen("test_stringRemove\n");
 }
 
+void test_stringToInt() {
+    TString s1 = stringInitWithCharArr("0");
+    TString s2 = stringInitWithCharArr("-2132456");
+    TString s3 = stringInitWithCharArr("18446744073709551615");
+
+    assertEq(stringToInt(s1), 0);
+    assertEq(stringToInt(s2), -2132456);
+    assertEq(stringToInt(s3), 18446744073709551615LL);
+
+    stringDestroy(&s1);
+    stringDestroy(&s2);
+    stringDestroy(&s3);
+
+    printGreen("test_stringToInt\n");
+}
+
+
 void test_stringToDouble() {
     TString s1 = stringInitWithCharArr("0");
     TString s2 = stringInitWithCharArr("12.34");
@@ -524,6 +541,7 @@ int main() {
     test_stringIsPalindrome();
     test_stringPad();
     test_stringRemove();
+//    test_stringToInt();
     test_stringCapitalize();
     return 0;
 }
