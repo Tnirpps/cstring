@@ -108,6 +108,9 @@ void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
 
+void stringCapitalize(TString *s);
+
+
 double stringToDouble(TString s);
 
 #endif
@@ -1007,5 +1010,28 @@ double stringToDouble(TString s) {
     }
     return number + decimal;
 }
+
+void stringCapitalize(TString *s) {
+    if (s == NULL || s->data == NULL) {
+        setError(ERR_NULL_POINTER);
+        return;
+    }
+    clearError();
+
+    bool capitalizeNext = true;
+    for (size_t i = 0; i < s->size; ++i) {
+        if (capitalizeNext && stringCharIsAlpha(s->data[i])) {
+            s->data[i] = stringCharToUpper(s->data[i]);
+            capitalizeNext = false;
+        } else {
+            s->data[i] = stringCharToLower(s->data[i]);
+        }
+
+        if (s->data[i] == ' ' || s->data[i] == '\t' || s->data[i] == '\n') {
+            capitalizeNext = true;
+        }
+    }
+}
+
 
 #endif
