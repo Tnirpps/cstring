@@ -107,6 +107,7 @@ void stringMap(TString *s, char (*func)(char));
 void stringMapIndex(TString *s, char (*func)(size_t, char));
 void stringRemove(TString *s, size_t pos, size_t len);
 void stringDestroy(TString *s);
+void stringCapitalize(TString *s);
 
 double stringToDouble(TString s);
 
@@ -970,6 +971,24 @@ void stringDestroy(TString *s) {
     if (s == NULL) return;
     free(s->data);
     *s = (TString){0};
+}
+
+bool isSeparator(char symbol) {
+    return symbol == ' ' || symbol == '\t' || symbol == '\n' || symbol == ',' || symbol == '.';
+}
+
+void stringCapitalize(TString *s) {
+    if (s == NULL || s->size == 0) {
+        return;
+    }
+    if ('a' <= s->data[0] && s->data[0] <= 'z') {
+        s->data[0] = stringCharToUpper(s->data[0]);
+    }
+    for (size_t i = 1; i < s->size; ++i) {
+        if (isSeparator(s->data[i - 1]) && 'a' <= s->data[i] && s->data[i] <= 'z') {
+            s->data[i] = stringCharToUpper(s->data[i]);
+        }
+    }
 }
 
 double stringToDouble(TString s) {
