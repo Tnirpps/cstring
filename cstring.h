@@ -6,7 +6,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
+#include <assert.h>
+#include <inttypes.h>
 
 typedef enum EErrorCode {
     ERR_NO_ERROR,
@@ -17,6 +19,7 @@ typedef enum EErrorCode {
     ERR_INVALID_STATE,
     ERR_NULL_POINTER,
     ERR_NUMBER_OVERFLOW,
+    ERR_INVALID_NUMBER_REPR,
     ERR_NAN
 } EErrorCode;
 
@@ -41,6 +44,8 @@ bool stringCharIsAlphanum(char c);
 char stringCharToLower(char c);
 char stringCharToUpper(char c);
 
+int stringCharToInt(char c);
+
 bool stringStartWith(TString s, TString pref);
 bool stringStartWithCharArr(TString s, char *pref);
 bool stringEndWith(TString s, TString pref);
@@ -61,6 +66,7 @@ int stringCompare(TString s1, TString s2);
 
 int64_t stringFindFirst(TString s, TString pattern);
 int64_t stringFindFirstCharArr(TString s, const char *pattern);
+int64_t stringToInt(TString s);
 
 TString stringRand(size_t size);
 TString stringInit(size_t capacity);
@@ -76,6 +82,7 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim);
 TString stringArrJoin(const TString *s, size_t count, TString delim);
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim);
 
+char* stringConvertToCharArr(const TString s);
 void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
@@ -219,7 +226,7 @@ void stringIncreaseCap(TString *s) {
     s->capacity = newCap;
 }
 
-// import
+// import 
 
 bool stringCharIsDigit(char c) {
     return ('0' <= c && c <= '9');
@@ -240,6 +247,14 @@ char stringCharToLower(char c) {
 char stringCharToUpper(char c) {
     if ('a' <= c && c <= 'z') return 'A' + (c - 'a');
     return c;
+}
+
+int stringCharToInt(char c) {
+    clearError();
+    if ('0' <= c && c <= '9') 
+        return c - '0';
+    setError(ERR_INVALID_NUMBER_REPR);
+    return -1;
 }
 
 bool stringStartWith(TString s, TString pref) {
@@ -360,6 +375,39 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
         if (match == patternLen) return i;
     }
     return -1;
+}
+
+int64_t stringToInt(TString s) {
+    clearError();
+
+    int64_t sign = 1;
+    int i = 0;
+
+    if (s.data[0] == '-') {
+        if (s.size == 1) {
+            setError(ERR_INVALID_NUMBER_REPR);
+            return 0;
+        }
+        sign = -1;
+        i++;
+    }
+
+    int64_t val = 0;
+    for (; i < s.size; i++) {
+        int64_t digit = stringCharToInt(s.data[i]);
+
+        // TODO: check for INT64_MIN overflow
+        if (val >= (INT64_MAX - digit) / 10) {
+            setError(ERR_NUMBER_OVERFLOW);
+            return val;
+        }
+        else {
+            val = val * 10 + digit;
+        }
+    }
+    val = val * sign;
+
+    return val;
 }
 
 TString stringInit(size_t capacity) {
@@ -602,6 +650,25 @@ TString stringSubstring(TString s, size_t pos, size_t len) {
         res.data[i] = s.data[pos + i];
     }
     res.size = len;
+    return res;
+}
+
+char* stringConvertToCharArr(const TString s) {
+    if (s.data == NULL)
+        return NULL;
+
+    clearError();
+    char *res = malloc(s.size + 1);
+
+    if(res == NULL) {
+        setError(ERR_NULL_POINTER);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < s.size; ++i) {
+        res[i] = s.data[i];
+    }
+    res[s.size] = '\0';
     return res;
 }
 
