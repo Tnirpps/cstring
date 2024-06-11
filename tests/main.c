@@ -18,6 +18,7 @@
         assert((X) != (Y));                               \
     }
 
+#define UNUSED(x) (void)(x)
 
 void printGreen(const char *text) {
     printf("\033[32m[ok]\033[0m %s", text);
@@ -370,10 +371,12 @@ void test_stringContains() {
 }
 
 bool acceptAll(char c) {
+    UNUSED(c);
     return true;
 }
 
 bool skipAll(char c) {
+    UNUSED(c);
     return false;
 }
 
@@ -471,11 +474,13 @@ void test_stringRemove() {
 void test_stringToInt() {
     TString s1 = stringInitWithCharArr("0");
     TString s2 = stringInitWithCharArr("-2132456");
-    TString s3 = stringInitWithCharArr("18446744073709551615");
+    TString s3 = stringInitWithCharArr("9223372036854775807");
+    TString s4 = stringInitWithCharArr("-9223372036854775808");
     
     assertEq(stringToInt(s1), 0);
     assertEq(stringToInt(s2), -2132456);
-    assertEq(stringToInt(s3), 18446744073709551615LL);
+    assertEq(stringToInt(s3), 9223372036854775807LL);
+    assertEq(stringToInt(s4), (-9223372036854775807LL - 1));
   
     stringDestroy(&s1);
     stringDestroy(&s2);

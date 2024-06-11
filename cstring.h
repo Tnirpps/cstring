@@ -6,9 +6,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <inttypes.h>
 
 typedef enum EErrorCode {
     ERR_NO_ERROR,
@@ -20,7 +17,6 @@ typedef enum EErrorCode {
     ERR_NULL_POINTER,
     ERR_NUMBER_OVERFLOW,
     ERR_INVALID_NUMBER_REPR,
-    ERR_NAN
 } EErrorCode;
 
 #define MAX_ERROR_MSG_LEN 300
@@ -89,7 +85,7 @@ TString stringJoinCharArr(TString s1, TString s2, const char *delim);
 TString stringArrJoin(const TString *s, size_t count, TString delim);
 TString stringArrJoinCharArr(const TString *s, size_t count, const char *delim);
 
-char* stringConvertToCharArr(const TString s);
+char* stringConvertToCharArr(TString s);
 void stringScan(TString *s);
 void stringPrint(TString s);
 void stringDebug(TString s);
@@ -240,7 +236,7 @@ bool stringCharIsDigit(char c) {
 }
 
 bool stringCharIsAlpha(char c) {
-    return ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z');
+    return (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'));
 }
 
 bool stringCharIsAlphanum(char c) {
@@ -372,7 +368,7 @@ int64_t stringFindFirstCharArr(TString s, const char *pattern) {
     }
     size_t patternLen = stringLenCharArr(pattern);
     for (size_t i = 0; i < s.size; ++i) {
-        int64_t match = 0;
+        size_t match = 0;
         for (size_t j = 0; i + j < s.size && j < patternLen; ++j) {
             if (s.data[i + j] != pattern[j]) break;
             ++match;
@@ -386,23 +382,24 @@ int64_t stringToInt(TString s) {
     clearError();
 
     int64_t sign = 1;
-    int i = 0;
+    size_t i = 0;
 
     if (s.data[0] == '-') {
+        if (s.size == 20 && stringCompSubstr(s.data, 0, 20, "-9223372036854775808", 0, 20, false) == 0) {
+            return INT64_MIN;
+        }
         if (s.size == 1) {
             setError(ERR_INVALID_NUMBER_REPR);
             return 0;
         }
         sign = -1;
-        i++;
+        ++i;
     }
 
     int64_t val = 0;
-    for (; i < s.size; i++) {
+    for (; i < s.size; ++i) {
         int64_t digit = stringCharToInt(s.data[i]);
-
-        // TODO: check for INT64_MIN overflow
-        if (val >= (INT64_MAX - digit) / 10) {
+        if (val > (INT64_MAX - digit) / 10) {
             setError(ERR_NUMBER_OVERFLOW);
             return val;
         }
@@ -658,21 +655,18 @@ TString stringSubstring(TString s, size_t pos, size_t len) {
     return res;
 }
 
-char* stringConvertToCharArr(const TString s) {
+char* stringConvertToCharArr(TString s) {
     if (s.data == NULL)
         return NULL;
 
     clearError();
-    char *res = malloc(s.size + 1);
+    char *res = (char *)malloc(s.size + 1);
 
-    if(res == NULL) {
+    if (res == NULL) {
         setError(ERR_NULL_POINTER);
         return NULL;
     }
-
-    for (size_t i = 0; i < s.size; ++i) {
-        res[i] = s.data[i];
-    }
+    memcpy(res, s.data, s.size * sizeof(char));
     res[s.size] = '\0';
     return res;
 }
@@ -1000,17 +994,17 @@ double stringToDouble(TString s) {
     double number = 0;
     double decimal = 0;
     bool negative = false;
-    int i = 0;
+    size_t i = 0;
     if (s.data[0] == '-') {
         negative = true;
         i = 1;
     }
     for (; i < s.size && s.data[i] != '.'; ++i) {
         if (stringCharIsDigit(s.data[i])) {
-            number *= 10;
+            number *= 10.0;
             number += (double)(s.data[i] - '0');
         } else {
-            setError(ERR_NAN);
+            setError(ERR_INVALID_NUMBER_REPR);
             return 0;
         }
     }
@@ -1021,7 +1015,7 @@ double stringToDouble(TString s) {
                 decimal += (double)(s.data[i] - '0');
                 decimal /= 10;
             } else {
-                setError(ERR_NAN);
+                setError(ERR_INVALID_NUMBER_REPR);
                 return 0;
             }
         }
