@@ -485,6 +485,7 @@ void test_stringToInt() {
     stringDestroy(&s1);
     stringDestroy(&s2);
     stringDestroy(&s3);
+    stringDestroy(&s4);
   
     printGreen("test_stringToInt\n");
 }
@@ -523,6 +524,15 @@ void test_stringCapitalize(){
     assertEq(stringCompare(num3, answer3), 0);
     stringCapitalize(&num4);
     assertEq(stringCompare(num4, answer4), 0);
+
+    stringDestroy(&num1);
+    stringDestroy(&num2);
+    stringDestroy(&num3);
+    stringDestroy(&num4);
+    stringDestroy(&answer1);
+    stringDestroy(&answer2);
+    stringDestroy(&answer3);
+    stringDestroy(&answer4);
 
     printGreen("test_stringCapitalize\n");
 }
