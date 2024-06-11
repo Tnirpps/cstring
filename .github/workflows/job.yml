@@ -13,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up the environment
-      run: cd test
     - name: Run the tests
-      run: make run
+      run: make run_tests
