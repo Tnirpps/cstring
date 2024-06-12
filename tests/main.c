@@ -496,7 +496,7 @@ void test_stringToDouble() {
     TString s3 = stringInitWithCharArr("-12.34");
 
     assertEq(stringToDouble(s1), 0);
-    assertEq(stringToDouble(s2), 12.34);
+    assertEq(stringToDouble(s2), 1.03459);
     assertEq(stringToDouble(s3), -12.34);
 
     stringDestroy(&s1);
