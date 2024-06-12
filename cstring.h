@@ -412,6 +412,40 @@ int64_t stringToInt(TString s) {
     return val;
 }
 
+double stringToDouble(TString s) {
+    double result = 0.0;
+    int sign = 1;
+    int decimalIndex = -1;
+    if (s.size > 0 && s.data[0] == '-') {
+        sign = -1;
+        stringRemove(&s, 0, 1);
+    }
+    for (size_t i = 0; i < s.size; ++i) {
+        if (s.data[i] == '.') {
+            decimalIndex = i;
+            break;
+        }
+    }
+    for (size_t i = 0; i < s.size; ++i) {
+        if (s.data[i] == '.') {
+            break;
+        }
+        if (stringCharIsDigit(s.data[i])) {
+            result = result * 10.0 + (s.data[i] - '0');
+        }
+    }
+    double divisor = 10.0;
+    if (decimalIndex != -1) {
+        for (size_t i = decimalIndex + 1; i < s.size; ++i) {
+            if (stringCharIsDigit(s.data[i])) {
+                result += (s.data[i] - '0') / divisor;
+                divisor *= 10.0;
+            }
+        }
+    }
+    return sign * result;
+}
+
 TString stringInit(size_t capacity) {
     TString s = {0};
     s.data = (char *)malloc(sizeof(char) * capacity);
