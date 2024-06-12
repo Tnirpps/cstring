@@ -492,7 +492,7 @@ void test_stringToInt() {
 
 void test_stringToDouble() {
     TString s1 = stringInitWithCharArr("0");
-    TString s2 = stringInitWithCharArr("12.03459");
+    TString s2 = stringInitWithCharArr("1.03459");
     TString s3 = stringInitWithCharArr("-12.34");
 
     assertEq(stringToDouble(s1), 0);
