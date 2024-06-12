@@ -1026,4 +1026,28 @@ double stringToDouble(TString s) {
     return number + decimal;
 }
 
+int64_t stringToInt(TString s) {
+    int64_t result = 0;
+    int sign = 1;
+    size_t i = 0;
+    
+    while (i < s.size && s.data[i] == ' ') {
+        i++;
+    }
+    
+    if (i < s.size && s.data[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (i < s.size && s.data[i] == '+') {
+        i++;
+    }
+    
+    while (i < s.size && s.data[i] >= '0' && s.data[i] <= '9') {
+        result = result * 10 + (s.data[i] - '0');
+        i++;
+    }
+
+    return result * sign;
+}
+
 #endif
