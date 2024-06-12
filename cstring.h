@@ -905,11 +905,17 @@ void stringToLower(TString *s) {
 }
 
 void stringReverse(TString *s) {
-    if (s == NULL || s->size == 0) return;
-    for (size_t i = 0; i < (s->size) / 2; ++i) {
-        char tmp = s->data[i];
-        s->data[i] = s->data[s->size - i - 1];
-        s->data[s->size - i - 1] = tmp;
+    if (s == NULL || s->size == 0 || s->data == NULL) {
+        return;
+    }
+    size_t left = 0;
+    size_t right = s->size - 1;
+    while (left < right) {
+        char tmp = s->data[left];
+        s->data[left] = s->data[right];
+        s->data[right] = tmp;
+        left++;
+        right--;
     }
 }
 
