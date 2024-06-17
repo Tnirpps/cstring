@@ -91,6 +91,7 @@ void stringPrint(TString s);
 void stringDebug(TString s);
 
 void stringRemoveChar(TString *s, char c);
+void stringInsert(TString *s, size_t pos, TString toInsert);
 void stringSwap(TString *s1, TString *s2);
 void stringPushBack(TString *s, char c);
 void stringPushFront(TString *s, char c);
@@ -722,6 +723,27 @@ void stringRemoveChar(TString *s, char c) {
             s->data[newSize] = s->data[i];
             ++newSize;
         }
+    }
+    s->size = newSize;
+}
+
+void stringInsert(TString *s, size_t pos, TString toInsert) {
+    if (pos >= s->size) return;
+    
+    size_t substringLength = toInsert.size;
+    size_t newSize = s->size + substringLength;
+    
+    TString secondPartCopy = stringInit(s->size - pos);
+    secondPartCopy.size = s->size - pos;
+    for (size_t i = pos; i < s->size; ++i) {
+        secondPartCopy.data[i - pos] = s->data[i];
+    }
+    
+    for (size_t i = pos; i < pos + substringLength; ++i) {
+        s->data[i] = toInsert.data[i - pos];
+    }
+    for (size_t i = pos + substringLength; i < newSize; ++i) {
+        s->data[i] = secondPartCopy.data[i - substringLength - pos];
     }
     s->size = newSize;
 }
